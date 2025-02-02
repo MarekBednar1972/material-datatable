@@ -70,17 +70,15 @@ export class MdDataTable extends LitElement {
 	private _firstVisibleIndex: number = 0;
 	private _lastVisibleIndex: number = 0;
 
-	private _allData: DataItem[] = []; // Array to hold all 1000 items
-
 	firstUpdated() {
 		this._virtualizer = this.renderRoot.querySelector(
 			'lit-virtualizer'
 		) as LitVirtualizer<DataItem>;
-		this._allData = generateDataItems(1000);
-		this._loadMoreData(0, 50, this._sortColumn, this._sortDirection);
+		generateDataItems(300);
+		this._loadMoreData(0, 50, this._sortColumn, this._sortDirection, true);
 	}
 
-	async _loadMoreData(startIndex: number, count: number, sortColumn: string | null, sortDirection: 'asc' | 'desc' | null) {
+	async _loadMoreData(startIndex: number, count: number, sortColumn: string | null, sortDirection: 'asc' | 'desc' | null, initialLoad = false) {
 		if (this._isFetchingData) {
 			return;
 		}
@@ -89,13 +87,22 @@ export class MdDataTable extends LitElement {
 
 		const newData = await loadMoreData(startIndex, count, sortColumn, sortDirection);
 
-		// 3. Update the data array based on the scroll direction.
-		if (startIndex === 0) {
-			// Prepend data if loading at the beginning
-			this.data = [...newData, ...this.data];
+		if (initialLoad) {
+			this.data = [...newData];
+		} else if (startIndex < this.data[0]?.id) {
+			const adjustedNewData = newData.map((item, index) => ({
+				...item,
+				id: startIndex + index,
+			}));
+			this.data = [...adjustedNewData, ...this.data];
 		} else {
 			// Append data if loading at the end
-			this.data = [...this.data, ...newData];
+			const maxId = Math.max(...this.data.map((item) => item.id));
+			const adjustedNewData = newData.map((item, index) => ({
+				...item,
+				id: maxId + 1 + index,
+			}));
+			this.data = [...this.data, ...adjustedNewData];
 		}
 
 		this._isFetchingData = false;
@@ -104,14 +111,31 @@ export class MdDataTable extends LitElement {
 	private _handleVisibilityChanged(event: VisibilityChangedEvent) {
 		this._firstVisibleIndex = event.first;
 		this._lastVisibleIndex = event.last;
-
 		const threshold = 10;
-		if (this._lastVisibleIndex + threshold >= this.data.length && !this._isFetchingData) {
-			this._loadMoreData(this.data.length, 20, this._sortColumn, this._sortDirection);
+
+		if (
+			this._lastVisibleIndex + threshold >= this.data.length &&
+			!this._isFetchingData
+		) {
+			this._loadMoreData(
+				this.data.length,
+				20,
+				this._sortColumn,
+				this._sortDirection
+			);
 		}
-		if (this._firstVisibleIndex < threshold && this.data.length > 0 && !this._isFetchingData) {
+		if (
+			this._firstVisibleIndex < threshold &&
+			this.data.length > 0 &&
+			!this._isFetchingData
+		) {
 			const newStartIndex = Math.max(0, this.data[0].id - 20);
-			this._loadMoreData(newStartIndex, 20, this._sortColumn, this._sortDirection);
+			this._loadMoreData(
+				newStartIndex,
+				20,
+				this._sortColumn,
+				this._sortDirection
+			);
 		}
 	}
 

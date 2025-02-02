@@ -1,6 +1,5 @@
 import {DataItem} from './md-data-table'; // Import DataItem
 
-// Make _allData private to this module
 let _allData: DataItem[] = [];
 
 /**
@@ -19,7 +18,6 @@ export function generateDataItems(count: number): DataItem[] {
 
 /**
  * Simulates fetching a "page" of data from a sorted dataset.
- * @param allData The entire dataset (already sorted).
  * @param startIndex The starting index of the page.
  * @param count The number of items to fetch.
  * @param sortColumn The column to sort by.
@@ -35,20 +33,16 @@ export async function loadMoreData(
 	// Simulate fetching data from an API (delay)
 	await new Promise((resolve) => setTimeout(resolve, 500));
 
-	let newData = _allData;
+	// 1. Sort the entire _allData array.
+	const sortedData = sortData(_allData, sortColumn, sortDirection);
 
-	// Sort the data if sortColumn and sortDirection are provided
-	if (sortColumn && sortDirection) {
-		newData = sortData(newData, sortColumn, sortDirection);
-	}
-
-	// Get the subset of data based on startIndex and count.
-	newData = newData.slice(startIndex, startIndex + count);
+	// 2. Get the subset of data based on startIndex and count.
+	const newData = sortedData.slice(startIndex, startIndex + count);
 
 	return newData;
 }
 
-function sortData(data: DataItem[], column: string, direction: 'asc' | 'desc' | null = 'asc'): DataItem[] {
+function sortData(data: DataItem[], column: string | null, direction: 'asc' | 'desc' | null = 'asc'): DataItem[] {
 	if (!column || !direction) {
 		return data; // Nothing to sort
 	}
