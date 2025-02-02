@@ -1,4 +1,4 @@
-import { DataItem } from './md-data-table'; // Import DataItem
+import {DataItem} from './md-data-table'; // Import DataItem
 
 // Make _allData private to this module
 let _allData: DataItem[] = [];
@@ -9,7 +9,7 @@ let _allData: DataItem[] = [];
  * @returns An array of DataItem objects.
  */
 export function generateDataItems(count: number): DataItem[] {
-	_allData = Array.from({ length: count }, (_, index) => ({
+	_allData = Array.from({length: count}, (_, index) => ({
 		id: index,
 		name: `Item ${index}`,
 		value: Math.random() * 100,

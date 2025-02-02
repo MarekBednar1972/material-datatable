@@ -6,11 +6,11 @@ import './md-data-table';
 export class MyApp extends LitElement {
 
 	static styles = css`
-        :host {
-            display: block;
-            padding: 20px;
-        }
-    `
+		:host {
+			display: block;
+			padding: 20px;
+		}
+	`
 	myInitialData = Array.from({ length: 100 }, (_, index) => ({
 		id: index,
 		name: `Item ${index}`,

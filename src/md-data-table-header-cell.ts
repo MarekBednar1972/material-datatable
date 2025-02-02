@@ -28,14 +28,17 @@ export class MdDataTableHeaderCell extends LitElement {
 
 	render() {
 		return html`
-            <slot></slot>
-            <md-icon-button>
-                ${this.sortDirection === 'asc'
-			? html`<md-icon>arrow_upward</md-icon>`
-			: this.sortDirection === 'desc'
-				? html`<md-icon>arrow_downward</md-icon>`
-				: html`<md-icon>unfold_more</md-icon>`}
-            </md-icon-button>
-        `;
+			<slot></slot>
+			<md-icon-button>
+				${this.sortDirection === 'asc'
+						? html`
+							<md-icon>arrow_upward</md-icon>`
+						: this.sortDirection === 'desc'
+								? html`
+									<md-icon>arrow_downward</md-icon>`
+								: html`
+									<md-icon>unfold_more</md-icon>`}
+			</md-icon-button>
+		`;
 	}
 }

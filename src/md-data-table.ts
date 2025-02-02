@@ -1,4 +1,4 @@
-import {LitElement, html, css} from 'lit';
+import {css, html, LitElement} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 import {LitVirtualizer, VisibilityChangedEvent} from '@lit-labs/virtualizer';
 import '@lit-labs/virtualizer';
@@ -12,6 +12,7 @@ export interface DataItem {
 	id: number;
 	name: string;
 	value: number;
+
 	[key: string]: any;
 }
 
@@ -21,23 +22,28 @@ export class MdDataTable extends LitElement {
 		:host {
 			display: block;
 		}
+
 		.container {
 			height: 400px;
 			position: relative;
 			overflow: hidden;
 		}
+
 		.table {
 			width: 100%;
 			border-spacing: 0;
 			border-collapse: collapse;
 		}
+
 		.header-row {
 			display: table-header-group;
 		}
+
 		.loading-indicator {
 			text-align: center;
 			padding: 10px;
 		}
+
 		lit-virtualizer {
 			display: block;
 			height: 100%;
@@ -131,33 +137,35 @@ export class MdDataTable extends LitElement {
 
 	render() {
 		return html`
-      <div class="container">
-        <div class="table">
-          <div class="header-row" slot="header-row">
-            ${this.columns.map((column) => html`
-              <md-data-table-header-cell
-                @click=${() => this._handleSort(column)}
-                .sortDirection=${this._sortColumn === column ? this._sortDirection : null}
-              >
-                ${column}
-              </md-data-table-header-cell>
-            `)}
-          </div>
-          <lit-virtualizer
-            scroller
-            .items=${this.data}
-            .renderItem=${(item: DataItem) => html`
-              <md-data-table-row>
-                ${this.columns.map(column => html`<md-data-table-cell>${item[column]}</md-data-table-cell>`)}
-              </md-data-table-row>
-            `}
-            @visibilityChanged=${this._handleVisibilityChanged}
-          ></lit-virtualizer>
-        </div>
-      </div>
-      ${this._isFetchingData
-			? html`<div class="loading-indicator">Loading...</div>`
-			: ''}
-    `;
+			<div class="container">
+				<div class="table">
+					<div class="header-row" slot="header-row">
+						${this.columns.map((column) => html`
+							<md-data-table-header-cell
+									@click=${() => this._handleSort(column)}
+									.sortDirection=${this._sortColumn === column ? this._sortDirection : null}
+							>
+								${column}
+							</md-data-table-header-cell>
+						`)}
+					</div>
+					<lit-virtualizer
+							scroller
+							.items=${this.data}
+							.renderItem=${(item: DataItem) => html`
+								<md-data-table-row>
+									${this.columns.map(column => html`
+										<md-data-table-cell>${item[column]}</md-data-table-cell>`)}
+								</md-data-table-row>
+							`}
+							@visibilityChanged=${this._handleVisibilityChanged}
+					></lit-virtualizer>
+				</div>
+			</div>
+			${this._isFetchingData
+					? html`
+						<div class="loading-indicator">Loading...</div>`
+					: ''}
+		`;
 	}
 }
