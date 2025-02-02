@@ -77,3 +77,13 @@
 	--extended-colors-red-container: #FFB6B6;
 	--extended-colors-purple-container: #F5D9FF;
 }
+
+.resize-handle {
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 5px;
+	height: 100%;
+	cursor: col-resize;
+	user-select: none;
+}
