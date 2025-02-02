@@ -135,7 +135,7 @@ export class MdDataTable extends LitElement {
 		const columnIndex = this.columns.indexOf(column);
 
 		if (columnIndex !== -1) {
-			this.shadowRoot!.querySelectorAll('.header-row md-data-table-header-cell')[columnIndex].style.width = `${width}px`;
+			(this.shadowRoot!.querySelectorAll('.header-row md-data-table-header-cell')[columnIndex] as HTMLElement).style.width = `${width}px`;
 			this.shadowRoot!.querySelectorAll('.table md-data-table-cell').forEach((cell, index) => {
 				if (index % this.columns.length === columnIndex) {
 					(cell as HTMLElement).style.width = `${width}px`;
