@@ -17,6 +17,17 @@ export class MdDataTableHeaderCell extends LitElement {
 
 		md-icon-button {
 			vertical-align: middle;
+			margin-left: 4px;
+		}
+
+		.resize-handle {
+			position: absolute;
+			right: 0;
+			top: 0;
+			width: 5px;
+			height: 100%;
+			cursor: col-resize;
+			user-select: none;
 		}
 	`;
 
@@ -25,6 +36,26 @@ export class MdDataTableHeaderCell extends LitElement {
 
 	@property({type: String})
 	sortDirection: 'asc' | 'desc' | null = null;
+
+	private _startX: number = 0;
+	private _startWidth: number = 0;
+
+	private _onMouseMove = (event: MouseEvent) => {
+		const dx = event.clientX - this._startX;
+		this.style.width = `${this._startWidth + dx}px`;
+	};
+
+	private _onMouseUp = () => {
+		document.removeEventListener('mousemove', this._onMouseMove);
+		document.removeEventListener('mouseup', this._onMouseUp);
+	};
+
+	private _onMouseDown = (event: MouseEvent) => {
+		this._startX = event.clientX;
+		this._startWidth = this.offsetWidth;
+		document.addEventListener('mousemove', this._onMouseMove);
+		document.addEventListener('mouseup', this._onMouseUp);
+	};
 
 	render() {
 		return html`
@@ -39,6 +70,7 @@ export class MdDataTableHeaderCell extends LitElement {
 								: html`
 									<md-icon>unfold_more</md-icon>`}
 			</md-icon-button>
+			<div class="resize-handle" @mousedown=${this._onMouseDown}></div>
 		`;
 	}
 }
