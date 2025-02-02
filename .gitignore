@@ -1,0 +1,31 @@
+ Node Modules
+node_modules/
+
+# Build Output
+dist/
+
+# IDE-specific files (if applicable)
+.idea/
+.vscode/
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories (if you're not using npm or yarn)
+jspm_packages/
+bower_components/
+
+# TypeScript cache
+*.tsbuildinfo
+
+# Other common files
+*.bak
+*.swp
+*.orig

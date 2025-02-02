@@ -1,0 +1,23 @@
+{
+  "name": "md-data-table-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.html",
+  "scripts": {
+    "start": "web-dev-server --node-resolve --open --watch",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@lit-labs/virtualizer": "^2.0.15",
+    "@material/web": "^2.2.0",
+    "lit": "^3.2.1",
+    "rxjs": "^7.8.1"
+  },
+  "devDependencies": {
+    "@web/dev-server": "^0.4.6",
+    "typescript": "^5.7.3"
+  }
+}
