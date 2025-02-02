@@ -1,6 +1,6 @@
 import {css, html, LitElement} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
-import {LitVirtualizer, VisibilityChangedEvent} from '@lit-labs/virtualizer';
+import {VisibilityChangedEvent} from '@lit-labs/virtualizer';
 import '@lit-labs/virtualizer';
 
 import './md-data-table-row';
@@ -65,16 +65,10 @@ export class MdDataTable extends LitElement {
 	@state()
 	private _sortDirection: 'asc' | 'desc' | null = null;
 
-	private _virtualizer?: LitVirtualizer<DataItem>;
-
-	private _firstVisibleIndex: number = 0;
 	private _lastVisibleIndex: number = 0;
 
 	firstUpdated() {
-		this._virtualizer = this.renderRoot.querySelector(
-			'lit-virtualizer'
-		) as LitVirtualizer<DataItem>;
-		generateDataItems(300);
+		generateDataItems(1000);
 		this._loadMoreData(0, 50, this._sortColumn, this._sortDirection, true);
 	}
 
@@ -89,27 +83,17 @@ export class MdDataTable extends LitElement {
 
 		if (initialLoad) {
 			this.data = [...newData];
-		} else if (startIndex < this.data[0]?.id) {
-			const adjustedNewData = newData.map((item, index) => ({
-				...item,
-				id: startIndex + index,
-			}));
-			this.data = [...adjustedNewData, ...this.data];
+		} else if (startIndex === 0) {
+			this.data = [...newData, ...this.data];
 		} else {
 			// Append data if loading at the end
-			const maxId = Math.max(...this.data.map((item) => item.id));
-			const adjustedNewData = newData.map((item, index) => ({
-				...item,
-				id: maxId + 1 + index,
-			}));
-			this.data = [...this.data, ...adjustedNewData];
+			this.data = [...this.data, ...newData];
 		}
 
 		this._isFetchingData = false;
 	}
 
 	private _handleVisibilityChanged(event: VisibilityChangedEvent) {
-		this._firstVisibleIndex = event.first;
 		this._lastVisibleIndex = event.last;
 		const threshold = 10;
 
@@ -119,19 +103,6 @@ export class MdDataTable extends LitElement {
 		) {
 			this._loadMoreData(
 				this.data.length,
-				20,
-				this._sortColumn,
-				this._sortDirection
-			);
-		}
-		if (
-			this._firstVisibleIndex < threshold &&
-			this.data.length > 0 &&
-			!this._isFetchingData
-		) {
-			const newStartIndex = Math.max(0, this.data[0].id - 20);
-			this._loadMoreData(
-				newStartIndex,
 				20,
 				this._sortColumn,
 				this._sortDirection
