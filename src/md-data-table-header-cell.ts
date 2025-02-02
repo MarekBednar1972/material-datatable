@@ -42,7 +42,13 @@ export class MdDataTableHeaderCell extends LitElement {
 
 	private _onMouseMove = (event: MouseEvent) => {
 		const dx = event.clientX - this._startX;
-		this.style.width = `${this._startWidth + dx}px`;
+		const newWidth = this._startWidth + dx;
+		this.style.width = `${newWidth}px`;
+		this.dispatchEvent(new CustomEvent('column-resize', {
+			detail: { column: this.column, width: newWidth },
+			bubbles: true,
+			composed: true
+		}));
 	};
 
 	private _onMouseUp = () => {
