@@ -130,28 +130,19 @@ export class MdDataTable extends LitElement {
 		this._loadMoreData(0, 50, this._sortColumn, this._sortDirection);
 	}
 
-	private _handleResize(event: MouseEvent, columnIndex: number) {
-		const startX = event.clientX;
-		const startWidth = this.shadowRoot!.querySelectorAll('.header-row md-data-table-header-cell')[columnIndex].offsetWidth;
+	private _handleResize(event: CustomEvent) {
+		const { column, width } = event.detail;
+		const columnIndex = this.columns.indexOf(column);
 
-		const onMouseMove = (moveEvent: MouseEvent) => {
-			const dx = moveEvent.clientX - startX;
-			const newWidth = startWidth + dx;
-			this.shadowRoot!.querySelectorAll('.header-row md-data-table-header-cell')[columnIndex].style.width = `${newWidth}px`;
+		if (columnIndex !== -1) {
+			this.shadowRoot!.querySelectorAll('.header-row md-data-table-header-cell')[columnIndex].style.width = `${width}px`;
 			this.shadowRoot!.querySelectorAll('.table md-data-table-cell').forEach((cell, index) => {
 				if (index % this.columns.length === columnIndex) {
-					(cell as HTMLElement).style.width = `${newWidth}px`;
+					(cell as HTMLElement).style.width = `${width}px`;
+					(cell as any).width = `${width}px`; // P1e14
 				}
 			});
-		};
-
-		const onMouseUp = () => {
-			document.removeEventListener('mousemove', onMouseMove);
-			document.removeEventListener('mouseup', onMouseUp);
-		};
-
-		document.addEventListener('mousemove', onMouseMove);
-		document.addEventListener('mouseup', onMouseUp);
+		}
 	}
 
 	render() {
@@ -162,7 +153,7 @@ export class MdDataTable extends LitElement {
 						${this.columns.map((column, index) => html`
 							<md-data-table-header-cell
 									@click=${() => this._handleSort(column)}
-									@mousedown=${(event: MouseEvent) => this._handleResize(event, index)}
+									@column-resize=${this._handleResize}
 									.sortDirection=${this._sortColumn === column ? this._sortDirection : null}
 							>
 								${column}

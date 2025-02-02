@@ -11,9 +11,14 @@ export class MdDataTableCell extends LitElement {
 		}
 	`;
 
+	@property({type: String})
+	width: string = '';
+
 	render() {
 		return html`
-            <slot></slot>
+            <div style="width: ${this.width};">
+                <slot></slot>
+            </div>
         `;
 	}
 }
