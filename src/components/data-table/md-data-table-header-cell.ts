@@ -160,11 +160,12 @@ export class MdDataTableHeaderCell extends LitElement {
                  style=${styleMap(styles)}
                  role="columnheader"
                  aria-sort=${this.sortDirection ?? 'none'}
-                 @click=${this.handleClick}>
+                 >
                 <div class="md-data-table__header-cell__content">
                     <slot></slot>
                     ${this.sortable ? html`
-                        <md-icon class="md-data-table__header-cell__sort-icon">
+                        <md-icon class="md-data-table__header-cell__sort-icon"
+								 @click=${this.handleClick}>
                             ${this.getSortIcon()}
                         </md-icon>
                     ` : nothing}
