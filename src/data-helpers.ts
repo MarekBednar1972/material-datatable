@@ -1,64 +1,58 @@
-import { DataItem } from './md-data-table'; // Import DataItem
+// data-helpers.ts
+import { DataItem, SortDirection } from './types';
 
-let _allData: DataItem[] = [];
+class DataManager {
+	private _data: DataItem[] = [];
+	private _totalItems: number = 0;
 
-/**
- * Generates a specified number of mock data items.
- * @param count The number of data items to generate.
- * @returns An array of DataItem objects.
- */
-export function generateDataItems(count: number): DataItem[] {
-	_allData = Array.from({ length: count }, (_, index) => ({
-		id: index,
-		name: `Item ${index}`,
-		value: Math.random() * 100,
-	}));
-	return _allData;
-}
-
-/**
- * Simulates fetching a "page" of data from a sorted dataset.
- * @param startIndex The starting index of the page.
- * @param count The number of items to fetch.
- * @param sortColumn The column to sort by.
- * @param sortDirection The sort direction.
- * @returns A Promise that resolves to the "page" of data.
- */
-export async function loadMoreData(
-	startIndex: number,
-	count: number,
-	sortColumn: string | null,
-	sortDirection: 'asc' | 'desc' | null
-): Promise<DataItem[]> {
-	// Simulate fetching data from an API (delay)
-	await new Promise((resolve) => setTimeout(resolve, 500));
-
-	// 1. Sort the entire _allData array.
-	const sortedData = sortData(_allData, sortColumn, sortDirection);
-
-	// 2. Get the subset of data based on startIndex and count.
-	const newData = sortedData.slice(startIndex, startIndex + count);
-
-	return newData;
-}
-
-function sortData(data: DataItem[], column: string | null, direction: "asc" | "desc" | null = 'asc'): DataItem[] {
-	if (!column || !direction) {
-		return data; // Nothing to sort
+	generateItems(count: number): void {
+		this._totalItems = count;
+		this._data = Array.from({ length: count }, (_, index) => ({
+			id: index,
+			name: `Item ${index}`,
+			value: Math.random() * 100,
+		}));
 	}
 
-	return [...data].sort((a, b) => {
-		const aValue = a[column];
-		const bValue = b[column];
+	getTotalItems(): number {
+		return this._totalItems;
+	}
 
-		if (aValue === bValue) {
-			return 0;
+	async loadData(
+		startIndex: number,
+		count: number,
+		sortColumn: string | null,
+		sortDirection: SortDirection
+	): Promise<DataItem[]> {
+		// Simulate network delay
+		await this.delay(500);
+
+		const sortedData = this.sortData(this._data, sortColumn, sortDirection);
+		return sortedData.slice(startIndex, startIndex + count);
+	}
+
+	private sortData(
+		data: DataItem[],
+		column: string | null,
+		direction: SortDirection
+	): DataItem[] {
+		if (!column || !direction) {
+			return data;
 		}
 
-		if (direction === 'asc') {
-			return aValue > bValue ? 1 : -1;
-		} else {
-			return aValue < bValue ? 1 : -1;
-		}
-	});
+		return [...data].sort((a, b) => {
+			const aValue = a[column];
+			const bValue = b[column];
+
+			if (aValue === bValue) return 0;
+			const modifier = direction === 'asc' ? 1 : -1;
+			return aValue > bValue ? modifier : -modifier;
+		});
+	}
+
+	private delay(ms: number): Promise<void> {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
 }
+
+export const dataManager = new DataManager();

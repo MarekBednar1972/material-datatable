@@ -9,6 +9,7 @@ export class MyApp extends LitElement {
 		:host {
 			display: block;
 			padding: 20px;
+			height: 500px;
 		}
 	`
 	myInitialData = Array.from({ length: 100 }, (_, index) => ({

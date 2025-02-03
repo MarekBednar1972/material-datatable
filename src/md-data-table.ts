@@ -1,182 +1,246 @@
-import {css, html, LitElement} from 'lit';
-import {customElement, property, state} from 'lit/decorators.js';
-import {VisibilityChangedEvent} from '@lit-labs/virtualizer';
+// md-data-table.ts
+import {html, LitElement, nothing} from 'lit';
+import { customElement, property, state } from 'lit/decorators.js';
+import { VisibilityChangedEvent } from '@lit-labs/virtualizer';
 import '@lit-labs/virtualizer';
 
 import './md-data-table-row';
 import './md-data-table-cell';
 import './md-data-table-header-cell';
-import {generateDataItems, loadMoreData} from './data-helpers';
+import { dataManager } from './data-helpers';
+import { tableStyles } from './table-styles';
+import {
+	DataItem,
+	SortDirection,
+	ColumnReorderEvent,
+	ColumnResizeEvent,
+	SortColumnEvent
+} from './types';
 
-export interface DataItem {
-	id: number;
-	name: string;
-	value: number;
-
-	[key: string]: any;
-}
+const INITIAL_PAGE_SIZE = 50;
+const LOAD_MORE_THRESHOLD = 10;
+const LOAD_MORE_COUNT = 20;
 
 @customElement('md-data-table')
 export class MdDataTable extends LitElement {
-	static styles = css`
-		:host {
-			display: block;
-		}
+	static styles = tableStyles;
 
-		.container {
-			height: 400px;
-			position: relative;
-			overflow: hidden;
-		}
+	// Public properties
+	@property({ type: Array }) data: DataItem[] = [];
+	@property({ type: Array }) columns: string[] = [];
 
-		.table {
-			width: 100%;
-			border-spacing: 0;
-			border-collapse: collapse;
-		}
-
-		.header-row {
-			display: table-header-group;
-		}
-
-		.loading-indicator {
-			text-align: center;
-			padding: 10px;
-		}
-
-		lit-virtualizer {
-			display: block;
-			height: 100%;
-		}
-	`;
-
-	@property({type: Array})
-	data: DataItem[] = [];
-
-	@property({type: Array})
-	columns: string[] = [];
-
-	@state()
-	private _isFetchingData = false;
-
-	@state()
-	private _sortColumn: string | null = null;
-
-	@state()
-	private _sortDirection: 'asc' | 'desc' | null = null;
+	// Private state
+	@state() private _visibleColumns: string[] = [];
+	@state() private _isFetchingData = false;
+	@state() private _sortColumn: string | null = null;
+	@state() private _sortDirection: SortDirection = null;
+	@state() private _totalItems: number = 0;
+	@state() private _placeholderItems: null[] = [];
 
 	private _lastVisibleIndex: number = 0;
 
-	firstUpdated() {
-		generateDataItems(1000);
-		this._loadMoreData(0, 50, this._sortColumn, this._sortDirection, true);
+	constructor() {
+		super();
+		this.setupEventListeners();
 	}
 
-	async _loadMoreData(startIndex: number, count: number, sortColumn: string | null, sortDirection: 'asc' | 'desc' | null, initialLoad = false) {
-		if (this._isFetchingData) {
-			return;
-		}
+	private setupEventListeners(): void {
+		this.addEventListener('sort-column', ((e: SortColumnEvent) => {
+			this.handleSort(e.detail.column);
+		}) as EventListener);
+	}
+
+	firstUpdated(): void {
+		this.initializeTable();
+	}
+
+	private async initializeTable(): Promise<void> {
+		this._visibleColumns = [...this.columns];
+		dataManager.generateItems(1000);
+		this._totalItems = dataManager.getTotalItems();
+		this._placeholderItems = new Array(this._totalItems).fill(null);
+		await this.loadMoreData(0, INITIAL_PAGE_SIZE, true);
+	}
+
+	private async loadMoreData(
+		startIndex: number,
+		count: number,
+		initialLoad = false
+	): Promise<void> {
+		if (this._isFetchingData) return;
 
 		this._isFetchingData = true;
 
-		const newData = await loadMoreData(startIndex, count, sortColumn, sortDirection);
-
-		if (initialLoad) {
-			this.data = [...newData];
-		} else if (startIndex === 0) {
-			this.data = [...newData, ...this.data];
-		} else {
-			// Append data if loading at the end
-			this.data = [...this.data, ...newData];
-		}
-
-		this._isFetchingData = false;
-	}
-
-	private _handleVisibilityChanged(event: VisibilityChangedEvent) {
-		this._lastVisibleIndex = event.last;
-		const threshold = 10;
-
-		if (
-			this._lastVisibleIndex + threshold >= this.data.length &&
-			!this._isFetchingData
-		) {
-			this._loadMoreData(
-				this.data.length,
-				20,
+		try {
+			const newData = await dataManager.loadData(
+				startIndex,
+				count,
 				this._sortColumn,
 				this._sortDirection
 			);
+
+			this.updateData(newData, startIndex, initialLoad);
+		} finally {
+			this._isFetchingData = false;
 		}
 	}
 
-	private _handleSort(column: string) {
-		let sortDirection: 'asc' | 'desc' | null = 'asc';
-		if (this._sortColumn === column) {
-			// Toggle sort direction
-			sortDirection =
-				this._sortDirection === 'asc' ? 'desc' :
-					this._sortDirection === 'desc' ? null : 'asc';
+	private updateData(newData: DataItem[], startIndex: number, initialLoad: boolean): void {
+		if (initialLoad) {
+			this.data = newData;
+		} else if (startIndex === 0) {
+			this.data = [...newData, ...this.data];
 		} else {
-			// Sort by the new column
-			sortDirection = 'asc';
+			this.data = [...this.data, ...newData];
 		}
-
-		this._sortColumn = column;
-		this._sortDirection = sortDirection;
-
-		// Clear the existing data and fetch from the beginning with sorting
-		this.data = [];
-		this._loadMoreData(0, 50, this._sortColumn, this._sortDirection);
 	}
 
-	private _handleResize(event: CustomEvent) {
-		const { column, width } = event.detail;
-		const columnIndex = this.columns.indexOf(column);
+	private handleVisibilityChanged(event: VisibilityChangedEvent): void {
+		this._lastVisibleIndex = event.last;
 
-		if (columnIndex !== -1) {
-			(this.shadowRoot!.querySelectorAll('.header-row md-data-table-header-cell')[columnIndex] as HTMLElement).style.width = `${width}px`;
-			this.shadowRoot!.querySelectorAll('.table md-data-table-cell').forEach((cell, index) => {
-				if (index % this.columns.length === columnIndex) {
-					(cell as HTMLElement).style.width = `${width}px`;
-					(cell as any).width = `${width}px`; // P1e14
-				}
-			});
+		if (this.shouldLoadMore()) {
+			this.loadMoreData(this.data.length, LOAD_MORE_COUNT);
 		}
+	}
+
+	private shouldLoadMore(): boolean {
+		return (
+			this._lastVisibleIndex + LOAD_MORE_THRESHOLD >= this.data.length &&
+			!this._isFetchingData
+		);
+	}
+
+	private handleSort(column: string): void {
+		this._sortDirection = this.getNextSortDirection(column);
+		this._sortColumn = this._sortDirection ? column : null;
+
+		this.data = [];
+		this.loadMoreData(0, INITIAL_PAGE_SIZE);
+	}
+
+	private getNextSortDirection(column: string): SortDirection {
+		if (this._sortColumn !== column) return 'asc';
+
+		const directions: SortDirection[] = ['asc', 'desc', null];
+		const currentIndex = directions.indexOf(this._sortDirection);
+		return directions[(currentIndex + 1) % directions.length];
+	}
+
+	private handleResize(event: ColumnResizeEvent): void {
+		const { column, width } = event.detail;
+		const columnIndex = this._visibleColumns.indexOf(column);
+
+		if (columnIndex === -1) return;
+
+		this.updateColumnWidths(columnIndex, width);
+	}
+
+	private updateColumnWidths(columnIndex: number, width: number): void {
+		const widthPx = `${width}px`;
+		const headerCell = this.getHeaderCell(columnIndex);
+		if (headerCell) headerCell.style.width = widthPx;
+
+		this.getDataCells(columnIndex).forEach(cell => {
+			cell.style.width = widthPx;
+			(cell as any).width = widthPx;
+		});
+	}
+
+	private getHeaderCell(index: number): HTMLElement | null {
+		return this.shadowRoot?.querySelector(
+			`.header-row md-data-table-header-cell:nth-child(${index + 1})`
+		) as HTMLElement;
+	}
+
+	private getDataCells(columnIndex: number): HTMLElement[] {
+		return Array.from(this.shadowRoot?.querySelectorAll('.table md-data-table-cell') || [])
+			.filter((_, index) => index % this._visibleColumns.length === columnIndex) as HTMLElement[];
+	}
+
+	private handleColumnReorder(event: ColumnReorderEvent): void {
+		const { sourceColumn, targetColumn } = event.detail;
+		const sourceIndex = this._visibleColumns.indexOf(sourceColumn);
+		const targetIndex = this._visibleColumns.indexOf(targetColumn);
+
+		if (sourceIndex === -1 || targetIndex === -1) return;
+
+		const newColumns = [...this._visibleColumns];
+		newColumns.splice(sourceIndex, 1);
+		newColumns.splice(targetIndex, 0, sourceColumn);
+		this._visibleColumns = newColumns;
+
+		this.dispatchEvent(new CustomEvent('columns-reordered', {
+			detail: { columns: this._visibleColumns },
+			bubbles: true,
+			composed: true
+		}));
+	}
+
+	private renderHeaderRow() {
+		return html`
+            <div class="header-row" 
+                 slot="header-row" 
+                 @column-reorder=${this.handleColumnReorder}>
+                ${this._visibleColumns.map(column => html`
+                    <md-data-table-header-cell
+                        .column=${column}
+                        .sortDirection=${this._sortColumn === column ? this._sortDirection : null}
+                        @column-resize=${this.handleResize}
+                    >
+                        ${column}
+                    </md-data-table-header-cell>
+                `)}
+            </div>
+        `;
+	}
+
+	private renderRow(item: null, index: number) {
+		const dataItem = this.data.find(d => d.id === index);
+		return dataItem
+			? this.renderDataRow(dataItem)
+			: this.renderPlaceholderRow();
+	}
+
+	private renderDataRow(dataItem: DataItem) {
+		return html`
+            <md-data-table-row>
+                ${this._visibleColumns.map(column => html`
+                    <md-data-table-cell>
+                        ${dataItem[column]}
+                    </md-data-table-cell>
+                `)}
+            </md-data-table-row>
+        `;
+	}
+
+	private renderPlaceholderRow() {
+		return html`
+            <md-data-table-row>
+                ${this._visibleColumns.map(() => html`
+                    <md-data-table-cell class="placeholder-cell">
+                        Loading...
+                    </md-data-table-cell>
+                `)}
+            </md-data-table-row>
+        `;
 	}
 
 	render() {
 		return html`
-			<div class="container">
-				<div class="table">
-					<div class="header-row" slot="header-row">
-						${this.columns.map((column, index) => html`
-							<md-data-table-header-cell
-									@click=${() => this._handleSort(column)}
-									@column-resize=${this._handleResize}
-									.sortDirection=${this._sortColumn === column ? this._sortDirection : null}
-							>
-								${column}
-							</md-data-table-header-cell>
-						`)}
-					</div>
-					<lit-virtualizer
-							scroller
-							.items=${this.data}
-							.renderItem=${(item: DataItem) => html`
-								<md-data-table-row>
-									${this.columns.map(column => html`
-										<md-data-table-cell>${item[column]}</md-data-table-cell>`)}
-								</md-data-table-row>
-							`}
-							@visibilityChanged=${this._handleVisibilityChanged}
-					></lit-virtualizer>
-				</div>
-			</div>
-			${this._isFetchingData
-					? html`
-						<div class="loading-indicator">Loading...</div>`
-					: ''}
-		`;
+            <div class="container">
+                <div class="table">
+                    ${this.renderHeaderRow()}
+                    <lit-virtualizer
+                        scroller
+                        .items=${this._placeholderItems}
+                        .renderItem=${this.renderRow.bind(this)}
+                        @visibilityChanged=${this.handleVisibilityChanged}
+                    ></lit-virtualizer>
+                </div>
+                ${this._isFetchingData
+			? html`<div class="loading-indicator">Loading...</div>`
+			: nothing}
+            </div>
+        `;
 	}
 }
