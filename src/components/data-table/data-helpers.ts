@@ -46,7 +46,13 @@ class DataManager {
 
 			if (aValue === bValue) return 0;
 			const modifier = direction === 'asc' ? 1 : -1;
-			return aValue > bValue ? modifier : -modifier;
+			if (typeof aValue === 'string' && typeof bValue === 'string') {
+				return aValue.localeCompare(bValue) * modifier;
+			}
+			if (typeof aValue === 'number' && typeof bValue === 'number') {
+				return (aValue - bValue) * modifier;
+			}
+			return 1;
 		});
 	}
 

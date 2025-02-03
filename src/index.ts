@@ -1,6 +1,6 @@
 import { html, LitElement, css } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import './md-data-table';
+import './components/data-table/md-data-table';
 
 @customElement('my-app')
 export class MyApp extends LitElement {
