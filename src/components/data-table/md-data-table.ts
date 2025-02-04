@@ -19,7 +19,15 @@ import {DataTableStateController, EventsController, UiStateController, VirtualSc
 import {styles} from './lib/data-table-styles.css.js';
 
 // Types and Constants
-import {DataItem, DataTableSize, ResizeEvent, SortDirection, SortEvent, ColumnReorderEvent} from './types.js';
+import {
+	DataItem,
+	DataTableSize,
+	ResizeEvent,
+	SortDirection,
+	SortEvent,
+	ColumnReorderEvent,
+	DataColumn
+} from './types.js';
 import {cssClasses, events, strings} from './constants.js';
 
 // Subcomponents
@@ -86,7 +94,7 @@ export class MdDataTable extends LitElement {
 	 * Array of column definitions.
 	 */
 	@property({type: Array})
-	columns: string[] = [];
+	columns: DataColumn[] = [];
 
 	/**
 	 * The data to display in the table.
@@ -101,13 +109,13 @@ export class MdDataTable extends LitElement {
 	totalItems = 0;
 
 	@property({type: Function})
-	dataProvider: (startIndex: number, pageSize: number, sortColumn: string, sortDirection: SortDirection) => Promise<DataItem[]> = async () => [];
+	dataProvider: (startIndex: number, pageSize: number, sortColumn: DataColumn, sortDirection: SortDirection) => Promise<DataItem[]> = async () => [];
 
 	@state()
 	private columnWidths: Record<string, number> = {};
 
 	@state()
-	private columnOrder: string[] = [];
+	private columnOrder: DataColumn[] = [];
 
 	// Controllers
 	private readonly dataController = new DataTableStateController(this);
@@ -122,13 +130,13 @@ export class MdDataTable extends LitElement {
 
 	private initDefaultColumnWidths() {
 		this.columnWidths = this.columns.reduce((acc, column) => {
-			acc[column] = 100;
+			acc[column.id] = 100;
 			return acc;
 		}, {} as Record<string, number>);
 	}
 
 	private initColumnOrder() {
-		this.columnOrder = [...this.columns];
+		this.columnOrder = this.columns.map(column => column);
 	}
 
 	private setupEventListeners() {
@@ -143,7 +151,10 @@ export class MdDataTable extends LitElement {
 		this.addEventListener(events.COLUMN_RESIZE, ((e: Event) => {
 			const event = e as ResizeEvent;
 			const {column, width} = event.detail;
-			this.columnWidths = {...this.columnWidths, [column]: width};
+			console.log('resize event', column, width);
+			this.columnWidths[column.id] = width;
+			this.columnWidths = structuredClone(this.columnWidths);
+
 		}) as EventListener);
 
 		this.addEventListener('column-reorder', ((e: Event) => {
@@ -154,14 +165,15 @@ export class MdDataTable extends LitElement {
 	}
 
 	private handleColumnReorder(sourceColumnId: string, targetColumnId: string) {
-		const sourceIndex = this.columnOrder.indexOf(sourceColumnId);
-		const targetIndex = this.columnOrder.indexOf(targetColumnId);
+		const srcCol = this.columnOrder.find((c => c.id === sourceColumnId));
+		const sourceIndex = this.columnOrder.map(c => c.id).indexOf(sourceColumnId);
+		const targetIndex = this.columnOrder.map(c => c.id).indexOf(targetColumnId);
 
 		if (sourceIndex === -1 || targetIndex === -1) return;
 
 		const newOrder = [...this.columnOrder];
 		newOrder.splice(sourceIndex, 1);
-		newOrder.splice(targetIndex, 0, sourceColumnId);
+		newOrder.splice(targetIndex, 0, srcCol as DataColumn);
 
 		this.columnOrder = newOrder;
 		this.requestUpdate();
@@ -215,18 +227,18 @@ export class MdDataTable extends LitElement {
         `;
 	}
 
-	private renderHeaderCell(column: string) {
+	private renderHeaderCell(column: DataColumn) {
 		const state = this.dataController.getState();
 		return html`
             <md-data-table-header-cell
-                    .sortable=${this.sortable}
+					.column=${column}
+					.sortable=${this.sortable}
                     .resizable=${this.resizable}
                     .draggable=${this.reorderable}
-                    .columnId=${column}
-                    .sortDirection=${state.sortColumn === column ?
+                    .sortDirection=${state.sortColumn?.id === column.id ?
 			state.sortDirection : null}
-                    .width=${this.columnWidths[column] + 'px'}>
-                ${column}
+                    .width=${this.columnWidths[column.id] + 'px'}>
+                ${column.label}
             </md-data-table-header-cell>
         `;
 	}
@@ -249,14 +261,14 @@ export class MdDataTable extends LitElement {
 		return html`
             <md-data-table-row .selected=${state.selectedIndices.has(index)}>
                 ${this.selectable ? this.renderSelectCell(index) : nothing}
-                ${this.columnOrder.map(column => this.renderCell(column, item[column]))}
+                ${this.columnOrder.map(column => this.renderCell(column, item[column.id]))}
             </md-data-table-row>
         `;
 	}
 
-	private renderCell(column: string, value: unknown) {
+	private renderCell(column: DataColumn, value: unknown) {
 		return html`
-            <md-data-table-cell .width=${this.columnWidths[column]}>
+            <md-data-table-cell .width=${this.columnWidths[column.id]}>
                 ${value}
             </md-data-table-cell>
         `;

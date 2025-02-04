@@ -4,10 +4,10 @@
  */
 
 import {ReactiveController, ReactiveElement} from 'lit';
-import {DataItem, SortDirection} from '../types.js';
+import {DataColumn, DataItem, SortDirection} from '../types.js';
 import {numbers} from '../constants.js';
 
-export type LoadMoreCallback = (startIndex: number, count: number, sortColumn: string, sortDirection: SortDirection) => Promise<DataItem[]>;
+export type LoadMoreCallback = (startIndex: number, count: number, sortColumn: DataColumn, sortDirection: SortDirection) => Promise<DataItem[]>;
 
 export interface VirtualScrollConfig {
 	pageSize?: number;
@@ -25,7 +25,7 @@ export class VirtualScrollController implements ReactiveController {
 	private loadingMore = false;
 	private lastVisibleIndex = 0;
 	private loadMoreCallback?: LoadMoreCallback;
-	private sortColumn: string | null = null;
+	private sortColumn: DataColumn | null = null;
 	private sortDirection: SortDirection = null;
 
 	constructor(host: ReactiveElement, loadMoreCallback?: LoadMoreCallback) {
@@ -45,7 +45,7 @@ export class VirtualScrollController implements ReactiveController {
 		}
 	}
 
-	setSorting(sortColumn: string, sortDirection: SortDirection) {
+	setSorting(sortColumn: DataColumn, sortDirection: SortDirection) {
 		this.sortColumn = sortColumn;
 		this.sortDirection = sortDirection;
 	}
@@ -70,7 +70,7 @@ export class VirtualScrollController implements ReactiveController {
 			const newData = await this.loadMoreCallback(
 				this.loadedData.length,
 				this.pageSize,
-				this.sortColumn as string,
+				this.sortColumn!,
 				this.sortDirection
 			);
 

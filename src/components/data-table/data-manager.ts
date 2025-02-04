@@ -1,5 +1,5 @@
 // data-helpers.ts
-import { DataItem, SortDirection } from './types';
+import {DataColumn, DataItem, SortDirection} from './types';
 
 export class DataManager {
 	private static _instance?: DataManager;
@@ -32,13 +32,13 @@ export class DataManager {
 	async loadData(
 		startIndex: number,
 		count: number,
-		sortColumn: string | null,
+		sortColumn: DataColumn,
 		sortDirection: SortDirection
 	): Promise<DataItem[]> {
 		console.log('loadData', startIndex, count, sortColumn, sortDirection)
 		// Simulate network delay
 		await DataManager.instance.delay(500);
-		const sortedData = DataManager.instance.sortData(DataManager.instance._data, sortColumn, sortDirection);
+		const sortedData = DataManager.instance.sortData(DataManager.instance._data, sortColumn?.id, sortDirection);
 		console.log(sortedData.length, sortedData.slice(startIndex, startIndex + count))
 		return sortedData.slice(startIndex, startIndex + count);
 	}

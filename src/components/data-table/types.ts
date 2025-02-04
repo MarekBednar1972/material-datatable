@@ -12,14 +12,14 @@ export interface DataItem {
 
 export interface SortEvent extends CustomEvent {
 	detail: {
-		column: string;
+		column: DataColumn;
 		direction: SortDirection;
 	};
 }
 
 export interface ResizeEvent extends CustomEvent {
 	detail: {
-		column: string;
+		column: DataColumn;
 		width: number;
 	};
 }
@@ -45,8 +45,17 @@ export interface ColumnReorderEvent extends CustomEvent {
 }
 
 export interface DataTableState {
-	sortColumn: string | null;
+	sortColumn: DataColumn | null;
 	sortDirection: SortDirection;
 	selectedIndices: Set<number>;
 	loading: boolean;
+}
+
+export interface DataColumn {
+	id: string;
+	label: string;
+	order: number;
+	numeric?: boolean;
+	sortable?: boolean;
+	draggable?: boolean;
 }

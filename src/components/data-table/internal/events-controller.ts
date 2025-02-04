@@ -5,7 +5,7 @@
 
 import {ReactiveController, ReactiveElement} from 'lit';
 import {events} from '../constants.js';
-import {SortDirection} from '../types.js';
+import {DataColumn, SortDirection} from '../types.js';
 
 /**
  * Controller that manages event dispatching for the data table.
@@ -20,7 +20,7 @@ export class EventsController implements ReactiveController {
 	hostConnected() {}
 	hostDisconnected() {}
 
-	dispatchSortChanged(column: string, direction: SortDirection) {
+	dispatchSortChanged(column: DataColumn, direction: SortDirection) {
 		this.dispatch(events.SORT_CHANGED, { column, direction });
 	}
 
@@ -36,7 +36,7 @@ export class EventsController implements ReactiveController {
 		this.dispatch(events.VISIBILITY_CHANGED, { first, last });
 	}
 
-	dispatchColumnResize(column: string, width: number) {
+	dispatchColumnResize(column: DataColumn, width: number) {
 		this.dispatch(events.COLUMN_RESIZE, { column, width });
 	}
 

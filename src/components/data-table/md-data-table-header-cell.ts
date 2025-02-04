@@ -16,7 +16,7 @@ import {UiStateController} from './internal/ui-state-controller';
 import {EventsController} from './internal/events-controller.js';
 
 // Types and Constants
-import {SortDirection} from './types.js';
+import {DataColumn, SortDirection} from './types.js';
 import {cssClasses, events} from './constants.js';
 
 // Styles
@@ -77,8 +77,8 @@ export class MdDataTableHeaderCell extends LitElement {
 	/**
 	 * Column identifier
 	 */
-	@property({type: String})
-	columnId = '';
+	@property({type: Object})
+	column: DataColumn = null!;
 
 	@queryAsync('.resize-handle')
 	private readonly resizeHandle!: Promise<HTMLDivElement>;
@@ -132,7 +132,7 @@ export class MdDataTableHeaderCell extends LitElement {
 		}
 
 		event.dataTransfer.effectAllowed = 'move';
-		event.dataTransfer.setData('text/plain', this.columnId);
+		event.dataTransfer.setData('text/plain', this.column.id + '');
 
 		// Add visual feedback
 		this.classList.add('dragging');
@@ -149,7 +149,7 @@ export class MdDataTableHeaderCell extends LitElement {
 		event.preventDefault();
 
 		const sourceColumnId = event.dataTransfer!.getData('text/plain');
-		const targetColumnId = this.columnId;
+		const targetColumnId = this.column.id;
 
 		if (sourceColumnId !== targetColumnId) {
 			this.dispatchEvent(new CustomEvent('column-reorder', {
@@ -184,7 +184,7 @@ export class MdDataTableHeaderCell extends LitElement {
 		const newWidth = Math.max(100, this.resizeStartWidth + delta);
 		this.style.width = `${newWidth}px`;
 		this.eventsController.dispatchColumnResize(
-			this.columnId,
+			this.column,
 			newWidth
 		);
 	};
@@ -201,7 +201,7 @@ export class MdDataTableHeaderCell extends LitElement {
 		else if (this.sortDirection === 'desc') direction = null;
 
 		this.eventsController.dispatchSortChanged(
-			this.columnId,
+			this.column,
 			direction
 		);
 	}

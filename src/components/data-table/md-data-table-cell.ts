@@ -34,8 +34,8 @@ export class MdDataTableCell extends LitElement {
 	/**
 	 * Width of the cell. Can be any valid CSS width value.
 	 */
-	@property({type: String})
-	width?: string;
+	@property({type: Number})
+	width?: number;
 
 	/**
 	 * Whether the cell contains numeric data (right-aligned).
@@ -75,7 +75,7 @@ export class MdDataTableCell extends LitElement {
 	protected updated(_changedProperties: PropertyValues) {
 		super.updated(_changedProperties);
 		if (_changedProperties.has('width')) {
-			this.setContentWidth(this.width ? parseInt(this.width) : 0);
+			this.setContentWidth(this.width);
 		}
 	}
 
@@ -102,12 +102,15 @@ export class MdDataTableCell extends LitElement {
 	 * Gets the current content width of the cell.
 	 */
 	getContentWidth(): number {
-		const content = this.shadowRoot?.querySelector('.md-data-table__cell');
-		return content?.scrollWidth || 0;
+		return this.scrollWidth || 0;
 	}
 
-	setContentWidth(width: number) {
-		(this.shadowRoot?.querySelector('.md-data-table__cell') as HTMLElement).style.width = `${width}px`;
+	setContentWidth(width: number | undefined) {
+		let el = (this.shadowRoot?.querySelector('.md-data-table__cell') as HTMLElement);
+		if (el && width) {
+			el.style.width = `${width}px`;
+			this.style.width = `${width}px`;
+		}
 	}
 
 	/**
