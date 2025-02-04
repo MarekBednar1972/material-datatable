@@ -12,7 +12,7 @@ import {styleMap} from 'lit/directives/style-map.js';
 import '@material/web/icon/icon.js';
 
 // Controllers
-import {StateController} from './internal/state-controller.js';
+import {UiStateController} from './internal/ui-state-controller';
 import {EventsController} from './internal/events-controller.js';
 
 // Types and Constants
@@ -71,7 +71,7 @@ export class MdDataTableHeaderCell extends LitElement {
 	@queryAsync('.resize-handle')
 	private readonly resizeHandle!: Promise<HTMLDivElement>;
 
-	private readonly stateController = new StateController(this);
+	private readonly stateController = new UiStateController(this);
 	private readonly eventsController = new EventsController(this);
 
 	private resizeStartX = 0;

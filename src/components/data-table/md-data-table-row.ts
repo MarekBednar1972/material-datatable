@@ -9,7 +9,7 @@ import {classMap} from 'lit/directives/class-map.js';
 
 // Styles
 import {styles} from './lib/data-table-row-styles.css.js';
-import {StateController} from './internal/state-controller.js';
+import {UiStateController} from './internal/ui-state-controller';
 import {cssClasses} from './constants.js';
 
 /**
@@ -55,7 +55,7 @@ export class MdDataTableRow extends LitElement {
 	@property({type: Boolean, reflect: true})
 	header = false;
 
-	private readonly stateController = new StateController(this);
+	private readonly stateController = new UiStateController(this);
 
 	override click() {
 		if (this.interactive) {

@@ -10,7 +10,7 @@ import {strings, cssClasses} from '../constants.js';
 /**
  * Controller that manages UI state and class generation.
  */
-export class StateController implements ReactiveController {
+export class UiStateController implements ReactiveController {
 	private host: ReactiveElement;
 
 	constructor(host: ReactiveElement) {

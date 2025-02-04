@@ -1,6 +1,7 @@
 import { html, LitElement, css } from 'lit';
 import { customElement } from 'lit/decorators.js';
 import './components/data-table/md-data-table';
+import {dataManager} from "./components/data-table/data-helpers";
 
 @customElement('my-app')
 export class MyApp extends LitElement {
@@ -11,16 +12,18 @@ export class MyApp extends LitElement {
 			padding: 20px;
 			height: 500px;
 		}
-	`
-	myInitialData = Array.from({ length: 100 }, (_, index) => ({
-		id: index,
-		name: `Item ${index}`,
-		value: Math.random() * 100
-	}));
+	`;
+	private manager = dataManager;
+
+	connectedCallback() {
+		this.manager.generateItems(1000);
+		super.connectedCallback();
+	}
+
 	render() {
 		return html`
         <h1>MD Data Table</h1>
-        <md-data-table .columns=${["id", "name", "value"]} .data=${this.myInitialData}></md-data-table>
+        <md-data-table .columns=${["id", "name", "value"]} .totalItems=${dataManager.getTotalItems()} .dataProvider="${this.manager.loadData}"></md-data-table>
     `;
 	}
 }

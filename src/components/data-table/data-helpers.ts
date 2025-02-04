@@ -1,7 +1,18 @@
 // data-helpers.ts
 import { DataItem, SortDirection } from './types';
 
-class DataManager {
+export class DataManager {
+	private static _instance?: DataManager;
+
+	private constructor() {
+		if (DataManager._instance)
+			throw new Error("Use Singleton.instance instead of new.");
+		DataManager._instance = this;
+	}
+	static get instance() {
+		return DataManager._instance ?? (DataManager._instance = new DataManager());
+	}
+
 	private _data: DataItem[] = [];
 	private _totalItems: number = 0;
 
@@ -24,10 +35,11 @@ class DataManager {
 		sortColumn: string | null,
 		sortDirection: SortDirection
 	): Promise<DataItem[]> {
+		console.log('loadData', startIndex, count, sortColumn, sortDirection)
 		// Simulate network delay
-		await this.delay(500);
-
-		const sortedData = this.sortData(this._data, sortColumn, sortDirection);
+		await DataManager.instance.delay(500);
+		const sortedData = DataManager.instance.sortData(DataManager.instance._data, sortColumn, sortDirection);
+		console.log(sortedData.length, sortedData.slice(startIndex, startIndex + count))
 		return sortedData.slice(startIndex, startIndex + count);
 	}
 
@@ -61,4 +73,4 @@ class DataManager {
 	}
 }
 
-export const dataManager = new DataManager();
+export const dataManager = DataManager.instance;

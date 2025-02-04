@@ -13,13 +13,13 @@ import '@material/web/progress/circular-progress.js';
 import '@lit-labs/virtualizer';
 
 // Internal Controllers
-import {DataTableController, EventsController, StateController, VirtualScrollController} from './internal/index.js';
+import {DataTableStateController, EventsController, UiStateController, VirtualScrollController} from './internal/index.js';
 
 // Styles
 import {styles} from './lib/data-table-styles.css.js';
 
 // Types and Constants
-import {DataItem, DataTableSize, ResizeEvent, SortEvent,} from './types.js';
+import {DataItem, DataTableSize, ResizeEvent, SortDirection, SortEvent,} from './types.js';
 import {cssClasses, events, strings} from './constants.js';
 
 // Subcomponents
@@ -82,7 +82,7 @@ export class MdDataTable extends LitElement {
 	/**
 	 * The data to display in the table.
 	 */
-	@property({type: Array})
+	@state()
 	data: DataItem[] = [];
 
 	/**
@@ -91,14 +91,17 @@ export class MdDataTable extends LitElement {
 	@property({type: Number})
 	totalItems = 0;
 
+	@property({type: Function})
+	dataProvider: (startIndex: number, pageSize: number, sortColumn: string, sortDirection: SortDirection) => Promise<DataItem[]> = async () => [];
+
 	@state()
 	private columnWidths: Record<string, number> = {};
 
 	// Controllers
-	private readonly dataController = new DataTableController(this);
-	private readonly virtualScrollController = new VirtualScrollController(this);
+	private readonly dataController = new DataTableStateController(this);
+	private virtualScrollController: VirtualScrollController = null as unknown as VirtualScrollController;
 	private readonly eventsController = new EventsController(this);
-	private readonly stateController = new StateController(this);
+	private readonly stateController = new UiStateController(this);
 
 	constructor() {
 		super();
@@ -111,12 +114,14 @@ export class MdDataTable extends LitElement {
 			return acc;
 		}, {} as Record<string, number>);
 	}
+
 	private setupEventListeners() {
 		this.addEventListener(events.SORT_CHANGED, ((e: Event) => {
 			const event = e as SortEvent;
 			const {column, direction} = event.detail;
-			this.dataController.setSorting(column, direction);
-			this.eventsController.dispatchSortUpdated(column, direction);
+			this.virtualScrollController.setSorting(column, direction);
+			this.dataController.setState({sortColumn: column, sortDirection: direction});
+			this.virtualScrollController.reset();
 		}) as EventListener);
 		this.addEventListener(events.COLUMN_RESIZE, ((e: Event) => {
 			const event = e as ResizeEvent;
@@ -127,15 +132,12 @@ export class MdDataTable extends LitElement {
 
 	override connectedCallback() {
 		super.connectedCallback();
+		this.virtualScrollController = new VirtualScrollController(this, this.dataProvider);
 		this.initDefaultColumnWidths();
-		this.dataController.setData(this.data);
 		this.virtualScrollController.setConfig({totalItems: this.totalItems});
 	}
 
 	override updated(changedProperties: Map<string, unknown>) {
-		if (changedProperties.has('data')) {
-			this.dataController.setData(this.data);
-		}
 		if (changedProperties.has('totalItems')) {
 			this.virtualScrollController.setConfig({totalItems: this.totalItems});
 		}
@@ -190,7 +192,7 @@ export class MdDataTable extends LitElement {
 			<div class=${cssClasses.BODY} role="rowgroup">
 				<lit-virtualizer
 						scroller
-						.items=${this.dataController.getData()}
+						.items=${this.virtualScrollController.getData()}
 						.renderItem=${this.renderRow.bind(this)}
 						@rangeChanged=${this.handleRangeChanged.bind(this)}>
 				</lit-virtualizer>

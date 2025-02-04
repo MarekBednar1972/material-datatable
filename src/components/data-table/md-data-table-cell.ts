@@ -9,7 +9,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
 
 // Controllers
-import {StateController} from './internal/state-controller.js';
+import {UiStateController} from './internal/ui-state-controller';
 
 // Styles
 import {styles} from './lib/data-table-cell-styles.css.js';
@@ -55,7 +55,7 @@ export class MdDataTableCell extends LitElement {
 	@property({type: String})
 	tooltip = '';
 
-	private readonly stateController = new StateController(this);
+	private readonly stateController = new UiStateController(this);
 
 	constructor() {
 		super();
