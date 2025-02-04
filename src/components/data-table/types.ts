@@ -37,6 +37,13 @@ export interface VisibilityEvent extends CustomEvent {
 	};
 }
 
+export interface ColumnReorderEvent extends CustomEvent {
+	detail: {
+		sourceColumnId: string;
+		targetColumnId: string;
+	};
+}
+
 export interface DataTableState {
 	sortColumn: string | null;
 	sortDirection: SortDirection;

@@ -68,6 +68,18 @@ export class MdDataTableHeaderCell extends LitElement {
 	@property({type: Boolean})
 	resizable = true;
 
+	/**
+	 * Whether the column is draggable for reordering.
+	 */
+	@property({type: Boolean})
+	draggable = true;
+
+	/**
+	 * Column identifier
+	 */
+	@property({type: String})
+	columnId = '';
+
 	@queryAsync('.resize-handle')
 	private readonly resizeHandle!: Promise<HTMLDivElement>;
 
@@ -81,6 +93,7 @@ export class MdDataTableHeaderCell extends LitElement {
 	constructor() {
 		super();
 		this.setupResizeHandlers();
+		this.setupDragHandlers();
 	}
 
 	private setupResizeHandlers() {
@@ -92,6 +105,14 @@ export class MdDataTableHeaderCell extends LitElement {
 		});
 	}
 
+	private setupDragHandlers() {
+		if (!this.draggable) return;
+		this.addEventListener('dragstart', this.handleDragStart);
+		this.addEventListener('dragover', this.handleDragOver);
+		this.addEventListener('drop', this.handleDrop);
+		this.addEventListener('dragend', this.handleDragEnd);
+	}
+
 	override disconnectedCallback() {
 		super.disconnectedCallback();
 		if (this.resizable) {
@@ -99,6 +120,52 @@ export class MdDataTableHeaderCell extends LitElement {
 			window.removeEventListener('mouseup', this.handleResizeEnd);
 		}
 	}
+
+	private handleDragStart = (event: DragEvent) => {
+		if (!this.draggable || !event.dataTransfer) return;
+
+		// Prevent drag if we're clicking the resize handle or sort icon
+		const target = event.target as HTMLElement;
+		if (target.closest('.resize-handle') || target.closest('md-icon')) {
+			event.preventDefault();
+			return;
+		}
+
+		event.dataTransfer.effectAllowed = 'move';
+		event.dataTransfer.setData('text/plain', this.columnId);
+
+		// Add visual feedback
+		this.classList.add('dragging');
+	};
+
+	private handleDragOver = (event: DragEvent) => {
+		if (!this.draggable) return;
+		event.preventDefault();
+		event.dataTransfer!.dropEffect = 'move';
+	};
+
+	private handleDrop = (event: DragEvent) => {
+		if (!this.draggable) return;
+		event.preventDefault();
+
+		const sourceColumnId = event.dataTransfer!.getData('text/plain');
+		const targetColumnId = this.columnId;
+
+		if (sourceColumnId !== targetColumnId) {
+			this.dispatchEvent(new CustomEvent('column-reorder', {
+				bubbles: true,
+				composed: true,
+				detail: {
+					sourceColumnId,
+					targetColumnId
+				}
+			}));
+		}
+	};
+
+	private handleDragEnd = () => {
+		this.classList.remove('dragging');
+	};
 
 	private handleResizeStart = (event: MouseEvent) => {
 		// Only start resize if clicking the resize handle
@@ -117,7 +184,7 @@ export class MdDataTableHeaderCell extends LitElement {
 		const newWidth = Math.max(100, this.resizeStartWidth + delta);
 		this.style.width = `${newWidth}px`;
 		this.eventsController.dispatchColumnResize(
-			this.textContent?.trim() || '',
+			this.columnId,
 			newWidth
 		);
 	};
@@ -134,7 +201,7 @@ export class MdDataTableHeaderCell extends LitElement {
 		else if (this.sortDirection === 'desc') direction = null;
 
 		this.eventsController.dispatchSortChanged(
-			this.textContent?.trim() || '',
+			this.columnId,
 			direction
 		);
 	}
@@ -148,7 +215,8 @@ export class MdDataTableHeaderCell extends LitElement {
 		const headerClasses = this.stateController.getHeaderCellClasses({
 			sortable: this.sortable,
 			sorted: !!this.sortDirection,
-			numeric: this.numeric
+			numeric: this.numeric,
+			draggable: this.draggable
 		});
 
 		const styles = {
@@ -160,12 +228,13 @@ export class MdDataTableHeaderCell extends LitElement {
                  style=${styleMap(styles)}
                  role="columnheader"
                  aria-sort=${this.sortDirection ?? 'none'}
+                 draggable=${this.draggable}
                  >
                 <div class="md-data-table__header-cell__content">
                     <slot></slot>
                     ${this.sortable ? html`
                         <md-icon class="md-data-table__header-cell__sort-icon"
-								 @click=${this.handleClick}>
+                                 @click=${this.handleClick}>
                             ${this.getSortIcon()}
                         </md-icon>
                     ` : nothing}

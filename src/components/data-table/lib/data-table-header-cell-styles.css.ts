@@ -15,6 +15,15 @@ export const styles = css`
     box-sizing: border-box;
   }
 
+  :host([draggable]) {
+    cursor: grab;
+  }
+
+  :host(.dragging) {
+    opacity: 0.5;
+    cursor: grabbing;
+  }
+
   .md-data-table__header-cell {
     display: flex;
     align-items: center;
@@ -30,6 +39,7 @@ export const styles = css`
     text-align: left;
     letter-spacing: 0.1px;
     padding-right: 0;
+    user-select: none;
   }
 
   .md-data-table__header-cell--sortable {
@@ -82,11 +92,20 @@ export const styles = css`
     margin-right: 12px;
     margin-left: -8px;
   }
-  
+
   .resize-handle {
     width: 10px;
     height: 100%;
     cursor: col-resize;
     margin-left: var(--_cell-container-padding);
+  }
+
+  /* Drag and drop visual feedback */
+  :host(:not(.dragging)) .md-data-table__header-cell:hover {
+    background-color: color-mix(
+        in srgb,
+        var(--_row-hover-state-layer-color) var(--_row-hover-state-layer-opacity),
+        var(--_header-container-color)
+    );
   }
 `;

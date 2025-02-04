@@ -55,14 +55,16 @@ export class UiStateController implements ReactiveController {
 		sortable: boolean;
 		sorted: boolean;
 		numeric: boolean;
+		draggable: boolean;
 	}): Record<string, boolean> {
-		const {sortable, sorted, numeric} = config;
+		const {sortable, sorted, numeric, draggable} = config;
 
 		return {
 			[cssClasses.HEADER_CELL]: true,
 			[cssClasses.HEADER_CELL_SORTABLE]: sortable,
 			[cssClasses.HEADER_CELL_SORTED]: sorted,
 			[cssClasses.CELL_NUMERIC]: numeric,
+			'md-data-table__header-cell--draggable': draggable,
 		};
 	}
 

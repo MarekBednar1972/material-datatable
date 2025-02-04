@@ -8,7 +8,8 @@ export const events = {
     SORT_UPDATED: 'sort-updated',
     SELECTION_CHANGED: 'selection-changed',
     VISIBILITY_CHANGED: 'visibility-changed',
-    COLUMN_RESIZE: 'column-resize'
+    COLUMN_RESIZE: 'column-resize',
+    COLUMN_REORDER: 'column-reorder'
 } as const;
 
 export const strings = {
@@ -41,7 +42,8 @@ export const cssClasses = {
     ROW_HOVERABLE: 'md-data-table__row--hoverable',
     CELL_NUMERIC: 'md-data-table__cell--numeric',
     HEADER_CELL_SORTED: 'md-data-table__header-cell--sorted',
-    HEADER_CELL_SORTABLE: 'md-data-table__header-cell--sortable'
+    HEADER_CELL_SORTABLE: 'md-data-table__header-cell--sortable',
+    HEADER_CELL_DRAGGABLE: 'md-data-table__header-cell--draggable'
 } as const;
 
 export const numbers = {
