@@ -5,107 +5,100 @@
 
 import {css} from 'lit';
 import {tokens} from './shared-styles.js';
+export const headerCellStyles = css`
+	${tokens}
+	:host {
+		display: table-cell;
+		vertical-align: inherit;
+		box-sizing: border-box;
+	}
 
-export const styles = css`
-  ${tokens}
+	:host([draggable]) {
+		cursor: grab;
+	}
 
-  :host {
-    display: table-cell;
-    vertical-align: inherit;
-    box-sizing: border-box;
-  }
+	:host(.dragging) {
+		opacity: var(--_disabled-state-layer-opacity);
+		cursor: grabbing;
+	}
 
-  :host([draggable]) {
-    cursor: grab;
-  }
+	.md-data-table__header-cell {
+		display: flex;
+		align-items: center;
+		position: relative;
+		height: var(--_header-row-height);
+		padding: 0 var(--_cell-horizontal-padding);
+		color: var(--_on-surface-variant);
+		font-family: var(--_title-small-font);
+		font-size: var(--_title-small-size);
+		font-weight: var(--_title-small-weight);
+		line-height: var(--_title-small-line-height);
+		box-sizing: border-box;
+		text-align: left;
+		letter-spacing: 0.1px;
+		padding-right: 0;
+		user-select: none;
+	}
 
-  :host(.dragging) {
-    opacity: 0.5;
-    cursor: grabbing;
-  }
+	.md-data-table__header-cell--sortable {
+		cursor: pointer;
+	}
 
-  .md-data-table__header-cell {
-    display: flex;
-    align-items: center;
-    position: relative;
-    height: var(--_header-container-height);
-    padding: 0 var(--_cell-container-padding);
-    color: var(--_header-headline-color);
-    font-family: var(--_header-headline-font);
-    font-size: var(--_header-headline-size);
-    font-weight: var(--_header-headline-weight);
-    line-height: var(--_header-headline-line-height);
-    box-sizing: border-box;
-    text-align: left;
-    letter-spacing: 0.1px;
-    padding-right: 0;
-    user-select: none;
-  }
+	.md-data-table__header-cell--sortable:hover {
+		color: var(--_on-surface);
+	}
 
-  .md-data-table__header-cell--sortable {
-    cursor: pointer;
-  }
+	.md-data-table__header-cell--sorted {
+		color: var(--_on-surface);
+	}
 
-  .md-data-table__header-cell--sortable:hover {
-    color: var(--md-sys-color-on-surface);
-  }
+	.md-data-table__header-cell--numeric {
+		justify-content: flex-end;
+		text-align: right;
+	}
 
-  .md-data-table__header-cell--sorted {
-    color: var(--md-sys-color-on-surface);
-  }
+	.md-data-table__header-cell__content {
+		display: flex;
+		align-items: center;
+		width: 100%;
+		pointer-events: none;
+	}
 
-  .md-data-table__header-cell--numeric {
-    justify-content: flex-end;
-    text-align: right;
-  }
+	.md-data-table__header-cell__sort-icon {
+		margin-left: 4px;
+		opacity: 0;
+		transition: opacity var(--_motion-duration-short) var(--_motion-easing-normal);
+		font-size: 18px;
+		width: 18px;
+		height: 18px;
+	}
 
-  .md-data-table__header-cell__content {
-    display: flex;
-    align-items: center;
-    width: 100%;
-  }
+	.md-data-table__header-cell--sortable:hover .md-data-table__header-cell__sort-icon,
+	.md-data-table__header-cell--sorted .md-data-table__header-cell__sort-icon {
+		opacity: 1;
+	}
 
-  .md-data-table__header-cell__sort-icon {
-    margin-left: 4px;
-    opacity: 0;
-    transition: opacity var(--_transition-duration) var(--_transition-timing-function);
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-  }
+	:host(:first-of-type) .md-data-table__header-cell {
+		padding-left: var(--_row-horizontal-padding);
+	}
 
-  .md-data-table__header-cell--sortable:hover .md-data-table__header-cell__sort-icon,
-  .md-data-table__header-cell--sorted .md-data-table__header-cell__sort-icon {
-    opacity: 1;
-  }
+	:host(:last-of-type) .md-data-table__header-cell {
+		padding-right: var(--_row-horizontal-padding);
+	}
 
-  /* Checkbox alignment - same as cells */
-  :host(:first-of-type) .md-data-table__header-cell {
-    padding-left: 24px;
-  }
+	md-checkbox {
+		margin-right: var(--_checkbox-margin);
+		margin-left: calc(-1 * var(--_checkbox-margin) / 1.5);
+	}
 
-  :host(:last-of-type) .md-data-table__header-cell {
-    padding-right: 24px;
-  }
+	.resize-handle {
+		width: 10px;
+		height: 100%;
+		cursor: col-resize;
+		margin-left: var(--_cell-horizontal-padding);
+	}
 
-  md-checkbox {
-    margin-right: 12px;
-    margin-left: -8px;
-  }
-
-  .resize-handle {
-    width: 10px;
-    height: 100%;
-    cursor: col-resize;
-    margin-left: var(--_cell-container-padding);
-  }
-
-  /* Drag and drop visual feedback */
-  :host(:not(.dragging)) .md-data-table__header-cell:hover {
-    background-color: color-mix(
-        in srgb,
-        var(--_row-hover-state-layer-color) var(--_row-hover-state-layer-opacity),
-        var(--_header-container-color)
-    );
-  }
+	:host(:not(.dragging)) .md-data-table__header-cell:hover {
+		background: var(--_hover-color);
+	}
 `;

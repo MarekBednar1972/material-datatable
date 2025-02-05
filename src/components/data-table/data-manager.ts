@@ -9,6 +9,7 @@ export class DataManager {
 			throw new Error("Use Singleton.instance instead of new.");
 		DataManager._instance = this;
 	}
+
 	static get instance() {
 		return DataManager._instance ?? (DataManager._instance = new DataManager());
 	}
@@ -18,7 +19,7 @@ export class DataManager {
 
 	generateItems(count: number): void {
 		this._totalItems = count;
-		this._data = Array.from({ length: count }, (_, index) => ({
+		this._data = Array.from({length: count}, (_, index) => ({
 			id: index,
 			name: `Item ${index}`,
 			value: Math.random() * 100,

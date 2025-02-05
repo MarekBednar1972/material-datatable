@@ -20,7 +20,7 @@ import {DataColumn, SortDirection} from './types.js';
 import {cssClasses, events} from './constants.js';
 
 // Styles
-import {styles} from './lib/data-table-header-cell-styles.css.js';
+import {headerCellStyles} from './lib/data-table-header-cell-styles.css.js';
 
 /**
  * @summary A header cell component for the data table that displays column headers.
@@ -36,7 +36,7 @@ import {styles} from './lib/data-table-header-cell-styles.css.js';
  */
 @customElement('md-data-table-header-cell')
 export class MdDataTableHeaderCell extends LitElement {
-	static override styles = [styles];
+	static override styles = [headerCellStyles];
 
 	/**
 	 * Whether the column is sortable.
@@ -93,7 +93,13 @@ export class MdDataTableHeaderCell extends LitElement {
 	constructor() {
 		super();
 		this.setupResizeHandlers();
-		this.setupDragHandlers();
+	}
+
+	connectedCallback() {
+		super.connectedCallback();
+		requestAnimationFrame(() => {
+			this.setupDragHandlers();
+		});
 	}
 
 	private setupResizeHandlers() {
@@ -122,10 +128,12 @@ export class MdDataTableHeaderCell extends LitElement {
 	}
 
 	private handleDragStart = (event: DragEvent) => {
+		console.log(123, event.dataTransfer);
 		if (!this.draggable || !event.dataTransfer) return;
 
 		// Prevent drag if we're clicking the resize handle or sort icon
 		const target = event.target as HTMLElement;
+		console.log('drag start', target.closest('.resize-handle'), target.closest('md-icon'));
 		if (target.closest('.resize-handle') || target.closest('md-icon')) {
 			event.preventDefault();
 			return;
@@ -224,26 +232,26 @@ export class MdDataTableHeaderCell extends LitElement {
 		};
 
 		return html`
-            <div class=${classMap(headerClasses)}
-                 style=${styleMap(styles)}
-                 role="columnheader"
-                 aria-sort=${this.sortDirection ?? 'none'}
-                 draggable=${this.draggable}
-                 >
-                <div class="md-data-table__header-cell__content">
-                    <slot></slot>
-                    ${this.sortable ? html`
-                        <md-icon class="md-data-table__header-cell__sort-icon"
-                                 @click=${this.handleClick}>
-                            ${this.getSortIcon()}
-                        </md-icon>
-                    ` : nothing}
-                </div>
-                ${this.resizable ? html`
-                    <div class="resize-handle"></div>
-                ` : nothing}
-            </div>
-        `;
+			<div class=${classMap(headerClasses)}
+				 style=${styleMap(styles)}
+				 role="columnheader"
+				 aria-sort=${this.sortDirection ?? 'none'}
+				 draggable=${this.draggable}
+			>
+				<div class="md-data-table__header-cell__content">
+					<slot></slot>
+					${this.sortable ? html`
+						<md-icon class="md-data-table__header-cell__sort-icon"
+								 @click=${this.handleClick}>
+							${this.getSortIcon()}
+						</md-icon>
+					` : nothing}
+				</div>
+				${this.resizable ? html`
+					<div class="resize-handle"></div>
+				` : nothing}
+			</div>
+		`;
 	}
 }
 

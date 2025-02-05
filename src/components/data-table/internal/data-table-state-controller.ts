@@ -4,8 +4,7 @@
  */
 
 import {ReactiveController, ReactiveElement} from 'lit';
-import {DataItem, SortDirection, DataTableState} from '../types.js';
-import {strings} from '../constants.js';
+import {DataTableState} from '../types.js';
 
 export class DataTableStateController implements ReactiveController {
 	private host: ReactiveElement;
@@ -20,8 +19,11 @@ export class DataTableStateController implements ReactiveController {
 		(this.host = host).addController(this);
 	}
 
-	hostConnected() {}
-	hostDisconnected() {}
+	hostConnected() {
+	}
+
+	hostDisconnected() {
+	}
 
 	setState(state: Partial<DataTableState>) {
 		this.state = {...this.state, ...state};
@@ -39,18 +41,18 @@ export class DataTableStateController implements ReactiveController {
 		} else {
 			newIndices.add(index);
 		}
-		this.setState({ selectedIndices: newIndices });
+		this.setState({selectedIndices: newIndices});
 	}
 
 	setSelectionAll(selected: boolean, totalCount: number) {
 		const newIndices = selected ?
-			new Set(Array.from({ length: totalCount }, (_, i) => i)) :
+			new Set(Array.from({length: totalCount}, (_, i) => i)) :
 			new Set<number>();
-		this.setState({ selectedIndices: newIndices });
+		this.setState({selectedIndices: newIndices});
 	}
 
 	setLoading(loading: boolean) {
-		this.setState({ loading });
+		this.setState({loading});
 	}
 
 }

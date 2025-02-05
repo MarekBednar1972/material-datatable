@@ -1,58 +1,61 @@
-/**
- * @license MIT
- * Copyright 2024 Digital Works Slovakia / M. Bednar
- */
-
 import {css} from 'lit';
 
 export const tokens = css`
-  :host {
-    /* Table theme tokens */
-    --_container-color: var(--md-data-table-container-color, var(--md-sys-color-surface));
-    --_container-shape: var(--md-data-table-container-shape, 0px);
-    --_container-shadow: var(--md-data-table-container-shadow, var(--md-sys-shadow-0));
-    
-    /* Header tokens */
-    --_header-container-color: var(--md-data-table-header-container-color, var(--md-sys-color-surface-container));
-    --_header-container-height: var(--md-data-table-header-container-height, 56px);
-    --_header-headline-color: var(--md-data-table-header-headline-color, var(--md-sys-color-on-surface-variant));
-    --_header-headline-font: var(--md-data-table-header-headline-font, var(--md-sys-typescale-title-small-font));
-    --_header-headline-line-height: var(--md-data-table-header-headline-line-height, var(--md-sys-typescale-title-small-line-height));
-    --_header-headline-size: var(--md-data-table-header-headline-size, var(--md-sys-typescale-title-small-size));
-    --_header-headline-weight: var(--md-data-table-header-headline-weight, var(--md-sys-typescale-title-small-weight));
-    
-    /* Row tokens */
-    --_row-container-color: var(--md-data-table-row-container-color, var(--md-sys-color-surface));
-    --_row-hover-state-layer-color: var(--md-data-table-row-hover-state-layer-color, var(--md-sys-color-on-surface));
-    --_row-hover-state-layer-opacity: var(--md-data-table-row-hover-state-layer-opacity, 0.08);
-    --_row-selected-container-color: var(--md-data-table-row-selected-container-color, var(--md-sys-color-surface-container-highest));
-    --_row-outline-color: var(--md-data-table-row-outline-color, var(--md-sys-color-outline-variant));
-    
-    /* Cell tokens */
-    --_cell-container-height: var(--md-data-table-cell-container-height, 52px);
-    --_cell-container-padding: var(--md-data-table-cell-container-padding, 16px);
-    --_cell-content-color: var(--md-data-table-cell-content-color, var(--md-sys-color-on-surface));
-    --_cell-content-font: var(--md-data-table-cell-content-font, var(--md-sys-typescale-body-medium-font));
-    --_cell-content-line-height: var(--md-data-table-cell-content-line-height, var(--md-sys-typescale-body-medium-line-height));
-    --_cell-content-size: var(--md-data-table-cell-content-size, var(--md-sys-typescale-body-medium-size));
-    --_cell-content-weight: var(--md-data-table-cell-content-weight, var(--md-sys-typescale-body-medium-weight));
+	:host {
+		/* Color Tokens - Direct mapping to MD3 system colors */
+		--_surface-color: var(--md-sys-color-surface);
+		--_on-surface: var(--md-sys-color-on-surface);
+		--_on-surface-variant: var(--md-sys-color-on-surface-variant);
+		--_surface-container: var(--md-sys-color-surface-container);
+		--_surface-container-high: var(--md-sys-color-surface-container-high);
+		--_surface-container-highest: var(--md-sys-color-surface-container-highest);
+		--_primary: var(--md-sys-color-primary);
+		--_on-primary: var(--md-sys-color-on-primary);
+		--_outline-variant: var(--md-sys-color-outline-variant);
 
-    /* Animation tokens */
-    --_transition-duration: var(--md-data-table-transition-duration, 200ms);
-    --_transition-timing-function: var(--md-data-table-transition-timing-function, cubic-bezier(0.2, 0, 0, 1));
-  }
-`;
+		/* Typography Tokens - Using MD3 type scale */
+		--_title-small-font: var(--md-sys-typescale-title-small-font);
+		--_title-small-line-height: var(--md-sys-typescale-title-small-line-height);
+		--_title-small-size: var(--md-sys-typescale-title-small-size);
+		--_title-small-weight: var(--md-sys-typescale-title-small-weight);
+		--_body-medium-font: var(--md-sys-typescale-body-medium-font);
+		--_body-medium-line-height: var(--md-sys-typescale-body-medium-line-height);
+		--_body-medium-size: var(--md-sys-typescale-body-medium-size);
+		--_body-medium-weight: var(--md-sys-typescale-body-medium-weight);
 
-export const sharedStyles = css`
-  .md-data-table__loading-overlay {
-    align-items: center;
-    background: rgba(var(--md-sys-color-surface-rgb), 0.7);
-    display: flex;
-    height: 100%;
-    justify-content: center;
-    left: 0;
-    position: absolute;
-    top: 0;
-    width: 100%;
-  }
+		/* State Layer Tokens */
+		--_hover-state-layer-opacity: 0.08;
+		--_pressed-state-layer-opacity: 0.12;
+		--_focus-state-layer-opacity: 0.12;
+		--_selected-state-layer-opacity: 0.08;
+		--_disabled-state-layer-opacity: 0.38;
+
+		/* Component-specific Tokens */
+		--_table-border-radius: var(--md-sys-shape-corner-small, 4px);
+		--_header-row-height: 56px;
+		--_data-row-height: 52px;
+		--_row-horizontal-padding: 16px;
+		--_compact-row-height: 44px;
+		--_comfortable-row-height: 60px;
+		--_cell-horizontal-padding: 16px;
+		--_checkbox-margin: 12px;
+
+		/* Animation Tokens */
+		--_motion-duration-short: 200ms;
+		--_motion-duration-medium: 400ms;
+		--_motion-easing-normal: cubic-bezier(0.2, 0, 0, 1);
+		--_motion-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+		/* Interactive States */
+		--_hover-color: color-mix(
+				in srgb,
+				var(--_on-surface) var(--_hover-state-layer-opacity),
+				transparent
+		);
+		--_selected-color: var(--_surface-container-highest);
+		--_focus-outline-color: var(--_primary);
+
+		/* Elevation */
+		--_container-shadow: var(--md-sys-elevation-1);
+	}
 `;

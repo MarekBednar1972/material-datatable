@@ -6,48 +6,46 @@
 import {css} from 'lit';
 import {tokens} from './shared-styles.js';
 
-export const styles = css`
-  ${tokens}
+export const cellStyles = css`
+	${tokens}
+	:host {
+		display: table-cell;
+		vertical-align: inherit;
+		box-sizing: border-box;
+	}
 
-  :host {
-    display: table-cell;
-    vertical-align: inherit;
-    box-sizing: border-box;
-  }
+	.md-data-table__cell {
+		display: flex;
+		align-items: center;
+		position: relative;
+		height: 100%;
+		padding: 0 var(--_cell-horizontal-padding);
+		color: var(--_on-surface);
+		font-family: var(--_body-medium-font);
+		font-size: var(--_body-medium-size);
+		font-weight: var(--_body-medium-weight);
+		line-height: var(--_body-medium-line-height);
+		box-sizing: border-box;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
 
-  .md-data-table__cell {
-    display: flex;
-    align-items: center;
-    position: relative;
-    height: var(--_cell-container-height);
-    padding: 0 var(--_cell-container-padding);
-    color: var(--_cell-content-color);
-    font-family: var(--_cell-content-font);
-    font-size: var(--_cell-content-size);
-    font-weight: var(--_cell-content-weight);
-    line-height: var(--_cell-content-line-height);
-    box-sizing: border-box;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+	.md-data-table__cell--numeric {
+		justify-content: flex-end;
+		text-align: right;
+	}
 
-  .md-data-table__cell--numeric {
-    justify-content: flex-end;
-    text-align: right;
-  }
+	:host(:first-of-type) .md-data-table__cell {
+		padding-left: var(--_row-horizontal-padding);
+	}
 
-  /* Checkbox alignment */
-  :host(:first-of-type) .md-data-table__cell {
-    padding-left: 24px;
-  }
+	:host(:last-of-type) .md-data-table__cell {
+		padding-right: var(--_row-horizontal-padding);
+	}
 
-  :host(:last-of-type) .md-data-table__cell {
-    padding-right: 24px;
-  }
-
-  md-checkbox {
-    margin-right: 12px;
-    margin-left: -8px;
-  }
+	md-checkbox {
+		margin-right: var(--_checkbox-margin);
+		margin-left: calc(-1 * var(--_checkbox-margin) / 1.5);
+	}
 `;

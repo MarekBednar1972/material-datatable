@@ -8,7 +8,7 @@ import {customElement, property} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 
 // Styles
-import {styles} from './lib/data-table-row-styles.css.js';
+import {rowStyles} from './lib/data-table-row-styles.css.js';
 import {UiStateController} from './internal/ui-state-controller';
 import {cssClasses} from './constants.js';
 
@@ -29,7 +29,7 @@ import {cssClasses} from './constants.js';
  */
 @customElement('md-data-table-row')
 export class MdDataTableRow extends LitElement {
-	static override styles = [styles];
+	static override styles = [rowStyles];
 
 	/**
 	 * Whether the row is currently selected.
@@ -62,7 +62,7 @@ export class MdDataTableRow extends LitElement {
 			this.dispatchEvent(new CustomEvent('row-click', {
 				bubbles: true,
 				composed: true,
-				detail: { selected: this.selected }
+				detail: {selected: this.selected}
 			}));
 		}
 	}
@@ -74,13 +74,13 @@ export class MdDataTableRow extends LitElement {
 		});
 
 		return html`
-            <div class=${classMap(rowClasses)}
-                 role=${this.header ? 'row header' : 'row'}
-                 aria-selected=${this.selected}
-                 tabindex=${this.interactive ? '0' : '-1'}>
-                <slot></slot>
-            </div>
-        `;
+			<div class=${classMap(rowClasses)}
+				 role=${this.header ? 'row header' : 'row'}
+				 aria-selected=${this.selected}
+				 tabindex=${this.interactive ? '0' : '-1'}>
+				<slot></slot>
+			</div>
+		`;
 	}
 
 	/**

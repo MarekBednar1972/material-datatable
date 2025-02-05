@@ -5,7 +5,7 @@
 
 import {ReactiveController, ReactiveElement} from 'lit';
 import {DataTableSize} from '../types.js';
-import {strings, cssClasses} from '../constants.js';
+import {cssClasses, strings} from '../constants.js';
 
 /**
  * Controller that manages UI state and class generation.
@@ -17,8 +17,11 @@ export class UiStateController implements ReactiveController {
 		(this.host = host).addController(this);
 	}
 
-	hostConnected() {}
-	hostDisconnected() {}
+	hostConnected() {
+	}
+
+	hostDisconnected() {
+	}
 
 	getTableClasses(config: {
 		size: DataTableSize;
@@ -64,7 +67,7 @@ export class UiStateController implements ReactiveController {
 			[cssClasses.HEADER_CELL_SORTABLE]: sortable,
 			[cssClasses.HEADER_CELL_SORTED]: sorted,
 			[cssClasses.CELL_NUMERIC]: numeric,
-			'md-data-table__header-cell--draggable': draggable,
+			[cssClasses.HEADER_CELL_DRAGGABLE]: draggable,
 		};
 	}
 

@@ -12,7 +12,7 @@ import {styleMap} from 'lit/directives/style-map.js';
 import {UiStateController} from './internal/ui-state-controller';
 
 // Styles
-import {styles} from './lib/data-table-cell-styles.css.js';
+import {cellStyles} from './lib/data-table-cell-styles.css.js';
 
 /**
  * @summary A cell component for the data table that displays a single cell of data.
@@ -29,7 +29,7 @@ import {styles} from './lib/data-table-cell-styles.css.js';
  */
 @customElement('md-data-table-cell')
 export class MdDataTableCell extends LitElement {
-	static override styles = [styles];
+	static override styles = [cellStyles];
 
 	/**
 	 * Width of the cell. Can be any valid CSS width value.

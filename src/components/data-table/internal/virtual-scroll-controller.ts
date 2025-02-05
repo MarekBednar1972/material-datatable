@@ -33,8 +33,11 @@ export class VirtualScrollController implements ReactiveController {
 		this.loadMoreCallback = loadMoreCallback;
 	}
 
-	hostConnected() {}
-	hostDisconnected() {}
+	hostConnected() {
+	}
+
+	hostDisconnected() {
+	}
 
 	setConfig(config: VirtualScrollConfig) {
 		if (config.pageSize !== undefined) {
@@ -84,6 +87,7 @@ export class VirtualScrollController implements ReactiveController {
 	getData(): DataItem[] {
 		return this.loadedData;
 	}
+
 	reset() {
 		this.loadedData = [];
 		this.lastVisibleIndex = 0;

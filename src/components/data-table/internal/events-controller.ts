@@ -17,27 +17,30 @@ export class EventsController implements ReactiveController {
 		(this.host = host).addController(this);
 	}
 
-	hostConnected() {}
-	hostDisconnected() {}
+	hostConnected() {
+	}
+
+	hostDisconnected() {
+	}
 
 	dispatchSortChanged(column: DataColumn, direction: SortDirection) {
-		this.dispatch(events.SORT_CHANGED, { column, direction });
+		this.dispatch(events.SORT_CHANGED, {column, direction});
 	}
 
 	dispatchSortUpdated(column: string | null, direction: SortDirection) {
-		this.dispatch(events.SORT_UPDATED, { column, direction });
+		this.dispatch(events.SORT_UPDATED, {column, direction});
 	}
 
 	dispatchSelectionChanged(selectedIndices: number[]) {
-		this.dispatch(events.SELECTION_CHANGED, { selectedIndices });
+		this.dispatch(events.SELECTION_CHANGED, {selectedIndices});
 	}
 
 	dispatchVisibilityChanged(first: number, last: number) {
-		this.dispatch(events.VISIBILITY_CHANGED, { first, last });
+		this.dispatch(events.VISIBILITY_CHANGED, {first, last});
 	}
 
 	dispatchColumnResize(column: DataColumn, width: number) {
-		this.dispatch(events.COLUMN_RESIZE, { column, width });
+		this.dispatch(events.COLUMN_RESIZE, {column, width});
 	}
 
 	private dispatch(eventName: string, detail: unknown) {

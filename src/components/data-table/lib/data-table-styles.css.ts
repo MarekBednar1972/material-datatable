@@ -4,61 +4,63 @@
  */
 
 import {css} from 'lit';
-import {tokens, sharedStyles} from './shared-styles.js';
+import {tokens} from './shared-styles.js';
 
-export const styles = css`
-  ${tokens}
-  ${sharedStyles}
+export const tableStyles = css`
+	${tokens}
+	:host {
+		display: inline-flex;
+		vertical-align: top;
+		min-width: 700px;
+		min-height: 450px;
+	}
 
-  :host {
-    display: inline-flex;
-    vertical-align: top;
-    min-width: 700px;
-    min-height: 450px;
-  }
+	.md-data-table {
+		background: var(--_surface-color);
+		border-radius: var(--_table-border-radius);
+		box-shadow: var(--_container-shadow);
+		display: flex;
+		flex-direction: column;
+		max-height: inherit;
+		overflow: hidden;
+		position: relative;
+		width: 100%;
+	}
 
-  .md-data-table {
-    background-color: var(--_container-color);
-    border-radius: var(--_container-shape);
-    box-shadow: var(--_container-shadow);
-    display: flex;
-    flex-direction: column;
-    max-height: inherit;
-    overflow: hidden;
-    position: relative;
-    width: 100%;
-  }
+	.md-data-table__header {
+		background: var(--_surface-container);
+		position: sticky;
+		top: 0;
+		z-index: 1;
+	}
 
-  .md-data-table__header {
-    background-color: var(--_header-container-color);
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
+	.md-data-table__body {
+		flex: 1;
+		overflow: auto;
+	}
 
-  .md-data-table__body {
-    flex: 1;
-    overflow: auto;
-  }
+	.md-data-table--compact .md-data-table__cell {
+		height: var(--_compact-row-height);
+	}
 
-  /** Size variants */
-  .md-data-table--compact .md-data-table__cell {
-    height: 44px;
-  }
+	.md-data-table--comfortable .md-data-table__cell {
+		height: var(--_comfortable-row-height);
+	}
 
-  .md-data-table--comfortable .md-data-table__cell {
-    height: 60px;
-  }
+	.md-data-table--loading {
+		pointer-events: none;
+	}
 
-  /** Loading state */
-  .md-data-table--loading {
-    pointer-events: none;
-  }
-
-  /** Virtualizer */
-  lit-virtualizer {
-    contain: strict;
-    height: 100%;
-    width: 100%;
-  }
+	.md-data-table__loading-overlay {
+		background: color-mix(
+				in srgb,
+				var(--_surface-color) 70%,
+				transparent
+		);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		position: absolute;
+		inset: 0;
+	}
 `;
