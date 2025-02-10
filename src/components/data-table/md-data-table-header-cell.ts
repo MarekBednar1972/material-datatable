@@ -135,12 +135,10 @@ export class MdDataTableHeaderCell extends LitElement {
 	}
 
 	private handleDragStart = (event: DragEvent) => {
-		console.log(123, event.dataTransfer);
 		if (!this.draggable || !event.dataTransfer) return;
 
 		// Prevent drag if we're clicking the resize handle or sort icon
 		const target = event.target as HTMLElement;
-		console.log('drag start', target.closest('.resize-handle'), target.closest('md-icon'));
 		if (target.closest('.resize-handle') || target.closest('md-icon')) {
 			event.preventDefault();
 			return;
@@ -185,7 +183,6 @@ export class MdDataTableHeaderCell extends LitElement {
 	private handleResizeStart = (event: MouseEvent) => {
 		// Only start resize if clicking the resize handle
 		const target = event.target as HTMLElement;
-		console.log(target)
 
 		this.isResizing = true;
 		this.resizeStartX = event.clientX;
@@ -210,7 +207,6 @@ export class MdDataTableHeaderCell extends LitElement {
 	};
 
 	private handleClick(event: MouseEvent) {
-		console.log('click', this.isResizing, this.sortable);
 		if (this.isResizing || !this.sortable) return;
 
 		let direction: SortDirection = 'asc';

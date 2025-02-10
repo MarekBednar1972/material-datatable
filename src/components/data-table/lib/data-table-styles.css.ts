@@ -19,12 +19,13 @@ export const tableStyles = css`
 		background: var(--_surface-color);
 		border-radius: var(--_table-border-radius);
 		box-shadow: var(--_container-shadow);
-		display: flex;
-		flex-direction: column;
+		display: table;
+		table-layout: auto;
 		max-height: inherit;
 		overflow: hidden;
 		position: relative;
 		width: 100%;
+		height: auto;
 	}
 
 	.md-data-table__header {
@@ -35,7 +36,7 @@ export const tableStyles = css`
 	}
 
 	.md-data-table__body {
-		flex: 1;
+		height: 100%;
 		overflow: auto;
 	}
 

@@ -10,6 +10,7 @@ import {classMap} from 'lit/directives/class-map.js';
 import '@material/web/checkbox/checkbox.js';
 import '@material/web/progress/circular-progress.js';
 import '@lit-labs/virtualizer';
+import {createRef, Ref, ref} from 'lit/directives/ref.js';
 
 // Internal Controllers
 import {
@@ -38,10 +39,12 @@ import {cssClasses, events, strings} from './constants.js';
 import './md-data-table-row.js';
 import './md-data-table-cell.js';
 import './md-data-table-header-cell.js';
-import {RangeChangedEvent} from "@lit-labs/virtualizer";
+import {LitVirtualizer, RangeChangedEvent} from "@lit-labs/virtualizer";
 
 @customElement('md-data-table')
 export class MdDataTable extends LitElement {
+	virtRef: Ref<LitVirtualizer> = createRef();
+
 	static override styles = [css`
 		:host {
 			width: 100%;
@@ -111,7 +114,6 @@ export class MdDataTable extends LitElement {
 		this.addEventListener(events.SORT_CHANGED, ((e: Event) => {
 			const event = e as SortEvent;
 			const {column, direction} = event.detail;
-			console.log(123, column, direction)
 			this.virtualScrollController.setSorting(column, direction);
 			this.dataController.setState({
 				sortColumn: column,
@@ -169,6 +171,19 @@ export class MdDataTable extends LitElement {
 		}
 	}
 
+	doCalculateVirtualscrollHeight() {
+		const hdrHeight = this.shadowRoot?.querySelector('.md-data-table__header');
+		if (this.virtRef.value && hdrHeight) {
+			const height = this.clientHeight - hdrHeight.clientHeight
+			this.virtRef.value.style.height = height + 'px';
+		}
+	}
+
+	override firstUpdated(changedProperties: Map<string | number | symbol, unknown>) {
+		super.firstUpdated(changedProperties);
+		this.doCalculateVirtualscrollHeight();
+	}
+
 	protected override render() {
 		const state = this.dataController.getState();
 		const tableClasses = this.stateController.getTableClasses({
@@ -220,6 +235,7 @@ export class MdDataTable extends LitElement {
 		return html`
 			<div class=${cssClasses.BODY} role="rowgroup">
 				<lit-virtualizer
+						${ref(this.virtRef)}
 						scroller
 						.items=${this.virtualScrollController.getData()}
 						.renderItem=${this.renderRow.bind(this)}
