@@ -1,5 +1,6 @@
 // data-helpers.ts
 import {DataColumn, DataItem, SortDirection} from './types';
+import { faker } from '@faker-js/faker';
 
 export class DataManager {
 	private static _instance?: DataManager;
@@ -19,11 +20,18 @@ export class DataManager {
 
 	generateItems(count: number): void {
 		this._totalItems = count;
-		this._data = Array.from({length: count}, (_, index) => ({
-			id: index,
-			name: `Item ${index}`,
-			value: Math.random() * 100,
-		}));
+		this._data = Array.from({length: count}, (_, index) => (this.createRandomUser()));
+	}
+
+	createRandomUser() {
+		return {
+			userId: faker.string.uuid(),
+			username: faker.internet.username(), // before version 9.1.0, use userName()
+			email: faker.internet.email(),
+			password: faker.internet.password(),
+			birthdate: faker.date.birthdate(),
+			registeredAt: faker.date.past(),
+		};
 	}
 
 	getTotalItems(): number {
@@ -39,7 +47,7 @@ export class DataManager {
 		console.log('loadData', startIndex, count, sortColumn, sortDirection)
 		// Simulate network delay
 		await DataManager.instance.delay(500);
-		const sortedData = DataManager.instance.sortData(DataManager.instance._data, sortColumn?.id, sortDirection);
+		const sortedData = DataManager.instance.sortData(DataManager.instance._data, sortColumn?.path, sortDirection);
 		console.log(sortedData.length, sortedData.slice(startIndex, startIndex + count))
 		return sortedData.slice(startIndex, startIndex + count);
 	}

@@ -147,7 +147,7 @@ export class MdDataTableHeaderCell extends LitElement {
 		}
 
 		event.dataTransfer.effectAllowed = 'move';
-		event.dataTransfer.setData('text/plain', this.column.id + '');
+		event.dataTransfer.setData('text/plain', this.column.path + '');
 
 		// Add visual feedback
 		this.classList.add('dragging');
@@ -164,7 +164,7 @@ export class MdDataTableHeaderCell extends LitElement {
 		event.preventDefault();
 
 		const sourceColumnId = event.dataTransfer!.getData('text/plain');
-		const targetColumnId = this.column.id;
+		const targetColumnId = this.column.path;
 
 		if (sourceColumnId !== targetColumnId) {
 			this.dispatchEvent(new CustomEvent('column-reorder', {
@@ -185,6 +185,7 @@ export class MdDataTableHeaderCell extends LitElement {
 	private handleResizeStart = (event: MouseEvent) => {
 		// Only start resize if clicking the resize handle
 		const target = event.target as HTMLElement;
+		console.log(target)
 
 		this.isResizing = true;
 		this.resizeStartX = event.clientX;
@@ -209,6 +210,7 @@ export class MdDataTableHeaderCell extends LitElement {
 	};
 
 	private handleClick(event: MouseEvent) {
+		console.log('click', this.isResizing, this.sortable);
 		if (this.isResizing || !this.sortable) return;
 
 		let direction: SortDirection = 'asc';

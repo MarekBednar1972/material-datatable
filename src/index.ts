@@ -18,20 +18,36 @@ export class MyApp extends LitElement {
 	private manager = dataManager;
 	private columns: DataColumn[] = [{
 		label: 'ID',
-		id: 'id',
 		order: 1,
-		path: 'id',
+		path: 'userId',
+		sortable: true
 	}, {
 		label: 'Name',
-		id: 'name',
 		order: 2,
-		path: 'name'
+		path: 'username',
+		sortable: true
 	}, {
-		label: 'Value',
-		id: 'value',
+		label: 'Email',
 		order: 3,
-		path: 'value'
-	}]
+		path: 'email',
+		sortable: false
+	}, {
+		label: 'Password',
+		order: 5,
+		path: 'password',
+		sortable: false
+	}, {
+		label: 'Birthdate',
+		order: 6,
+		path: 'birthdate',
+		sortable: true
+	}, {
+		label: 'Registered at',
+		order: 7,
+		path: 'registeredAt',
+		sortable: true
+	}
+	]
 
 	connectedCallback() {
 		this.manager.generateItems(1000);

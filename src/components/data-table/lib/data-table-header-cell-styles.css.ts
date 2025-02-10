@@ -61,7 +61,7 @@ export const headerCellStyles = css`
 		display: flex;
 		align-items: center;
 		width: 100%;
-		pointer-events: none;
+		//pointer-events: none;
 	}
 
 	.md-data-table__header-cell__sort-icon {

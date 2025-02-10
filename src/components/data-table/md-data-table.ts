@@ -111,6 +111,7 @@ export class MdDataTable extends LitElement {
 		this.addEventListener(events.SORT_CHANGED, ((e: Event) => {
 			const event = e as SortEvent;
 			const {column, direction} = event.detail;
+			console.log(123, column, direction)
 			this.virtualScrollController.setSorting(column, direction);
 			this.dataController.setState({
 				sortColumn: column,
@@ -134,9 +135,9 @@ export class MdDataTable extends LitElement {
 	}
 
 	private handleColumnReorder(sourceColumnId: string, targetColumnId: string) {
-		const srcCol = this.columnOrder.find(c => c.id === sourceColumnId);
-		const sourceIndex = this.columnOrder.findIndex(c => c.id === sourceColumnId);
-		const targetIndex = this.columnOrder.findIndex(c => c.id === targetColumnId);
+		const srcCol = this.columnOrder.find(c => c.path === sourceColumnId);
+		const sourceIndex = this.columnOrder.findIndex(c => c.path === sourceColumnId);
+		const targetIndex = this.columnOrder.findIndex(c => c.path === targetColumnId);
 
 		if (sourceIndex === -1 || targetIndex === -1) return;
 
@@ -207,7 +208,7 @@ export class MdDataTable extends LitElement {
 					.sortable=${this.sortable}
 					.resizable=${this.resizable}
 					.draggable=${this.reorderable}
-					.sortDirection=${state.sortColumn?.id === column.id ?
+					.sortDirection=${state.sortColumn?.path === column.path ?
 							state.sortDirection : null}
 					.width=${this.columnWidths[column.path]}>
 				${column.label}
@@ -236,7 +237,7 @@ export class MdDataTable extends LitElement {
 					.hoverable=${true}
 					.interactive=${this.selectable}>
 				${this.selectable ? this.renderSelectCell(index) : nothing}
-				${this.columnOrder.map(column => this.renderCell(column, item[column.id]))}
+				${this.columnOrder.map(column => this.renderCell(column, item[column.path]))}
 			</md-data-table-row>
 		`;
 	}
