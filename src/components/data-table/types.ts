@@ -54,6 +54,7 @@ export interface DataTableState {
 export interface DataColumn {
 	id: string;
 	label: string;
+	path: string;
 	order: number;
 	numeric?: boolean;
 	sortable?: boolean;

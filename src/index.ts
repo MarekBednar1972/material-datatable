@@ -19,15 +19,18 @@ export class MyApp extends LitElement {
 	private columns: DataColumn[] = [{
 		label: 'ID',
 		id: 'id',
-		order: 1
+		order: 1,
+		path: 'id',
 	}, {
 		label: 'Name',
 		id: 'name',
-		order: 2
+		order: 2,
+		path: 'name'
 	}, {
 		label: 'Value',
 		id: 'value',
-		order: 3
+		order: 3,
+		path: 'value'
 	}]
 
 	connectedCallback() {

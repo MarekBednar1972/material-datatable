@@ -3,7 +3,7 @@
  * Copyright 2024 Digital Works Slovakia / M. Bednar
  */
 
-import {html, LitElement, nothing} from 'lit';
+import {html, LitElement, nothing, PropertyValues} from 'lit';
 import {customElement, property, queryAsync} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 import {styleMap} from 'lit/directives/style-map.js';
@@ -59,8 +59,8 @@ export class MdDataTableHeaderCell extends LitElement {
 	/**
 	 * Width of the column. Can be any valid CSS width value.
 	 */
-	@property({type: String})
-	width?: string;
+	@property({type: Number})
+	width?: number;
 
 	/**
 	 * Whether the column is resizable.
@@ -100,6 +100,13 @@ export class MdDataTableHeaderCell extends LitElement {
 		requestAnimationFrame(() => {
 			this.setupDragHandlers();
 		});
+	}
+
+	protected updated(_changedProperties: PropertyValues) {
+		super.updated(_changedProperties);
+		if (_changedProperties.has('width')) {
+			this.style.width = this.width ? `${this.width}px` : 'auto';
+		}
 	}
 
 	private setupResizeHandlers() {
@@ -189,7 +196,7 @@ export class MdDataTableHeaderCell extends LitElement {
 		if (!this.isResizing) return;
 
 		const delta = event.clientX - this.resizeStartX;
-		const newWidth = Math.max(100, this.resizeStartWidth + delta);
+		const newWidth = Math.max(150, this.resizeStartWidth + delta);
 		this.style.width = `${newWidth}px`;
 		this.eventsController.dispatchColumnResize(
 			this.column,
@@ -227,13 +234,9 @@ export class MdDataTableHeaderCell extends LitElement {
 			draggable: this.draggable
 		});
 
-		const styles = {
-			width: this.width || 'auto'
-		};
-
 		return html`
 			<div class=${classMap(headerClasses)}
-				 style=${styleMap(styles)}
+			     style="width: ${this.width ? `${this.width}px` : 'auto'}"
 				 role="columnheader"
 				 aria-sort=${this.sortDirection ?? 'none'}
 				 draggable=${this.draggable}

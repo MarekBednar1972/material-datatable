@@ -2,7 +2,7 @@
  * @license MIT
  * Copyright 2024 Digital Works
  */
-import {html, LitElement, nothing} from 'lit';
+import {css, html, LitElement, nothing} from 'lit';
 import {customElement, property, state} from 'lit/decorators.js';
 import {classMap} from 'lit/directives/class-map.js';
 
@@ -42,7 +42,11 @@ import {RangeChangedEvent} from "@lit-labs/virtualizer";
 
 @customElement('md-data-table')
 export class MdDataTable extends LitElement {
-	static override styles = [tableStyles];
+	static override styles = [css`
+		:host {
+			width: 100%;
+		}
+	`, tableStyles];
 
 	@property({type: String})
 	size: DataTableSize = strings.DEFAULT_SIZE;
@@ -94,7 +98,7 @@ export class MdDataTable extends LitElement {
 
 	private initDefaultColumnWidths() {
 		this.columnWidths = this.columns.reduce((acc, column) => {
-			acc[column.id] = 100;
+			acc[column.path] = 150;
 			return acc;
 		}, {} as Record<string, number>);
 	}
@@ -118,7 +122,7 @@ export class MdDataTable extends LitElement {
 		this.addEventListener(events.COLUMN_RESIZE, ((e: Event) => {
 			const event = e as ResizeEvent;
 			const {column, width} = event.detail;
-			this.columnWidths[column.id] = width;
+			this.columnWidths[column.path] = width;
 			this.columnWidths = {...this.columnWidths};
 		}) as EventListener);
 
@@ -205,7 +209,7 @@ export class MdDataTable extends LitElement {
 					.draggable=${this.reorderable}
 					.sortDirection=${state.sortColumn?.id === column.id ?
 							state.sortDirection : null}
-					.width=${this.columnWidths[column.id] + 'px'}>
+					.width=${this.columnWidths[column.path]}>
 				${column.label}
 			</md-data-table-header-cell>
 		`;
@@ -240,7 +244,7 @@ export class MdDataTable extends LitElement {
 	private renderCell(column: DataColumn, value: unknown) {
 		return html`
 			<md-data-table-cell
-					.width=${this.columnWidths[column.id]}
+					.width=${this.columnWidths[column.path]}
 					.numeric=${column.numeric}>
 				${value}
 			</md-data-table-cell>
