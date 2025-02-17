@@ -14,14 +14,14 @@ export const tokens = css`
 		--_outline-variant: var(--md-sys-color-outline-variant);
 
 		/* Typography Tokens - Using MD3 type scale */
-		--_title-small-font: var(--md-sys-typescale-title-small-font);
-		--_title-small-line-height: var(--md-sys-typescale-title-small-line-height);
-		--_title-small-size: var(--md-sys-typescale-title-small-size);
-		--_title-small-weight: var(--md-sys-typescale-title-small-weight);
-		--_body-medium-font: var(--md-sys-typescale-body-medium-font);
-		--_body-medium-line-height: var(--md-sys-typescale-body-medium-line-height);
-		--_body-medium-size: var(--md-sys-typescale-body-medium-size);
-		--_body-medium-weight: var(--md-sys-typescale-body-medium-weight);
+		--_title-small-font: var(--Font-Family);
+		--_title-small-line-height: var(--Font-Line-Height-Body-Small);
+		--_title-small-size: var(--Font-Size-Body-Small);
+		--_title-small-weight: 400;
+		--_body-medium-font: var(--Font-Family);
+		--_body-medium-line-height: var(--Font-Line-Height-Body-Medium);
+		--_body-medium-size: var(--Font-Size-Body-Medium);
+		--_body-medium-weight: 400;
 
 		/* State Layer Tokens */
 		--_hover-state-layer-opacity: 0.08;

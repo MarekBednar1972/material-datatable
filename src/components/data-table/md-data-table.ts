@@ -69,9 +69,6 @@ export class MdDataTable extends LitElement {
 	@property({type: Array})
 	columns: DataColumn[] = [];
 
-	@state()
-	data: DataItem[] = [];
-
 	@property({type: Number})
 	totalItems = 0;
 
@@ -270,7 +267,7 @@ export class MdDataTable extends LitElement {
 
 	private renderSelectAllCell() {
 		const state = this.dataController.getState();
-		const allSelected = state.selectedIndices.size === this.data.length;
+		const allSelected = state.selectedIndices.size === this.totalItems;
 		const someSelected = state.selectedIndices.size > 0 && !allSelected;
 
 		return html`
@@ -306,7 +303,7 @@ export class MdDataTable extends LitElement {
 
 	private handleSelectAll(e: Event) {
 		const checkbox = e.target as HTMLInputElement;
-		this.dataController.setSelectionAll(checkbox.checked, this.data.length);
+		this.dataController.setSelectionAll(checkbox.checked, this.totalItems);
 		this.eventsController.dispatchSelectionChanged(
 			[...this.dataController.getState().selectedIndices]
 		);
