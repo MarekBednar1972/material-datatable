@@ -2,7 +2,7 @@ import {html, LitElement, css} from 'lit';
 import {customElement} from 'lit/decorators.js';
 import './components/data-table/md-data-table';
 import {DataColumn} from "./components/data-table/types";
-import {dataManager} from "./components/data-table/data-manager";
+import {dataManager} from "./data-manager";
 
 @customElement('my-app')
 export class MyApp extends LitElement {

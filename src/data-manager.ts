@@ -1,5 +1,4 @@
-// data-helpers.ts
-import {DataColumn, DataItem, SortDirection} from './types';
+import {DataColumn, DataItem, SortDirection} from './components/data-table/types';
 import { faker } from '@faker-js/faker';
 
 export class DataManager {
