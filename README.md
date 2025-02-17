@@ -82,7 +82,7 @@ The component uses Material Design v3 tokens for consistent theming:
 
 ## License
 
-MIT License - Copyright (c) 2025 Marek Bednář
+MIT License - Copyright (c) 2025 Marek Bednář, Digitalworks Slovakia
 
 ## Dependencies
 
