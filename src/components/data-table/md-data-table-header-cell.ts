@@ -132,6 +132,12 @@ export class MdDataTableHeaderCell extends LitElement {
 			window.removeEventListener('mousemove', this.handleResizeMove);
 			window.removeEventListener('mouseup', this.handleResizeEnd);
 		}
+		if (this.draggable) {
+			this.removeEventListener('dragstart', this.handleDragStart);
+			this.removeEventListener('dragover', this.handleDragOver);
+			this.removeEventListener('drop', this.handleDrop);
+			this.removeEventListener('dragend', this.handleDragEnd);
+		}
 	}
 
 	private handleDragStart = (event: DragEvent) => {
@@ -165,7 +171,7 @@ export class MdDataTableHeaderCell extends LitElement {
 		const targetColumnId = this.column.path;
 
 		if (sourceColumnId !== targetColumnId) {
-			this.dispatchEvent(new CustomEvent('column-reorder', {
+			this.dispatchEvent(new CustomEvent(events.COLUMN_REORDER, {
 				bubbles: true,
 				composed: true,
 				detail: {
@@ -221,7 +227,7 @@ export class MdDataTableHeaderCell extends LitElement {
 
 	private getSortIcon(): string {
 		if (!this.sortDirection) return 'unfold_more';
-		return this.sortDirection === 'asc' ? 'arrow_upward' : 'arrow_downward';
+		return this.sortDirection === 'asc' ? 'expand_less' : 'expand_more';
 	}
 
 	protected override render() {

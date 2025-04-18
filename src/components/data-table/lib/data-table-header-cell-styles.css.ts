@@ -23,15 +23,16 @@ export const headerCellStyles = css`
 	}
 
 	.md-data-table__header-cell {
+		background-color: var(--_table-background-color);
 		display: flex;
 		align-items: center;
 		position: relative;
 		height: var(--_header-row-height);
-		padding: 0 var(--_cell-horizontal-padding);
+		padding: 0 20px;
 		color: var(--_on-surface-variant);
-		font-family: var(--_title-small-font);
+		font-family: 'Roboto', Arial, sans-serif;
 		font-size: var(--_title-small-size);
-		font-weight: var(--_title-small-weight);
+		font-weight: 700;
 		line-height: var(--_title-small-line-height);
 		box-sizing: border-box;
 		text-align: left;
@@ -39,7 +40,9 @@ export const headerCellStyles = css`
 		padding-right: 0;
 		user-select: none;
 	}
-
+	.md-data-table-cell.title {
+	background-color: var(--_table-background-color);
+	}
 	.md-data-table__header-cell--sortable {
 		cursor: pointer;
 	}
@@ -58,6 +61,18 @@ export const headerCellStyles = css`
 	}
 
 	.md-data-table__header-cell__content {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    height: 56px;
+    font-size: 1rem;
+    padding: 0;
+}
+    padding: 0 0 0 0;
+    min-height: 48px;
+    align-items: center;
+    font-size: 1rem;
+}
 		display: flex;
 		align-items: center;
 		width: 100%;
@@ -65,16 +80,50 @@ export const headerCellStyles = css`
 	}
 
 	.md-data-table__header-cell__sort-icon {
+    margin-left: 8px;
+    color: var(--_on-surface-variant);
+    opacity: 1;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+    margin-left: 8px;
+    color: var(--_on-surface-variant);
+    opacity: 1;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    float: right;
+}
 		margin-left: 4px;
 		opacity: 0;
-		transition: opacity var(--_motion-duration-short) var(--_motion-easing-normal);
-		font-size: 18px;
-		width: 18px;
-		height: 18px;
 	}
 
 	.md-data-table__header-cell--sortable:hover .md-data-table__header-cell__sort-icon,
 	.md-data-table__header-cell--sorted .md-data-table__header-cell__sort-icon {
+    margin-left: 8px;
+    color: var(--_on-surface-variant);
+    opacity: 1;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+    margin-left: 8px;
+    color: var(--_on-surface-variant);
+    opacity: 1;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+    float: right;
+}
 		opacity: 1;
 	}
 

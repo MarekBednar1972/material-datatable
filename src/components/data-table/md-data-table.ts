@@ -86,6 +86,8 @@ export class MdDataTable extends LitElement {
 	@state()
 	private columnOrder: DataColumn[] = [];
 
+	private _prevDataLength = 0;
+
 	private readonly dataController = new DataTableStateController(this);
 	private virtualScrollController: VirtualScrollController = null as unknown as VirtualScrollController;
 	private readonly eventsController = new EventsController(this);
@@ -97,11 +99,33 @@ export class MdDataTable extends LitElement {
 	}
 
 	private initDefaultColumnWidths() {
-		this.columnWidths = this.columns.reduce((acc, column) => {
-			acc[column.path] = 150;
-			return acc;
-		}, {} as Record<string, number>);
+	// Use a canvas to measure text width
+	function measureTextWidth(text: string, font: string = '16px Roboto'): number {
+		const canvas = document.createElement('canvas');
+		const context = canvas.getContext('2d')!;
+		context.font = font;
+		return context.measureText(text).width;
 	}
+
+	const sampleRows = this.virtualScrollController?.getData()?.slice(0, 20) ?? [];
+	const font = '16px Roboto'; // Match your table cell font
+
+	this.columnWidths = this.columns.reduce((acc, column) => {
+		// Measure header label
+		let maxWidth = measureTextWidth(column.label, font);
+
+		// Measure each cell in sample rows
+		for (const row of sampleRows) {
+			const value = String(row[column.path] ?? '');
+			const width = measureTextWidth(value, font);
+			if (width > maxWidth) maxWidth = width;
+		}
+
+		// Add some padding (e.g., 32px)
+		acc[column.path] = Math.ceil(maxWidth) + 32;
+		return acc;
+	}, {} as Record<string, number>);
+}
 
 	private initColumnOrder() {
 		this.columnOrder = [...this.columns];
@@ -126,7 +150,7 @@ export class MdDataTable extends LitElement {
 			this.columnWidths = {...this.columnWidths};
 		}) as EventListener);
 
-		this.addEventListener('column-reorder', ((e: Event) => {
+		this.addEventListener(events.COLUMN_REORDER, ((e: Event) => {
 			const event = e as ColumnReorderEvent;
 			const {sourceColumnId, targetColumnId} = event.detail;
 			this.handleColumnReorder(sourceColumnId, targetColumnId);
@@ -166,6 +190,12 @@ export class MdDataTable extends LitElement {
 		if (changedProperties.has('columns') && !changedProperties.has('columnOrder')) {
 			this.initColumnOrder();
 		}
+		// Recalculate column widths when data first arrives
+		const data = this.virtualScrollController.getData();
+		if (this._prevDataLength === 0 && data.length > 0) {
+			this.initDefaultColumnWidths();
+		}
+		this._prevDataLength = data.length;
 	}
 
 	doCalculateVirtualscrollHeight() {
@@ -271,7 +301,7 @@ export class MdDataTable extends LitElement {
 		const someSelected = state.selectedIndices.size > 0 && !allSelected;
 
 		return html`
-			<md-data-table-cell>
+			<md-data-table-header-cell>
 				<md-checkbox
 						.checked=${allSelected}
 						.indeterminate=${someSelected}

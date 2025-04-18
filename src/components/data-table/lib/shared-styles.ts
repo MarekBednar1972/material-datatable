@@ -32,6 +32,7 @@ export const tokens = css`
 
 		/* Component-specific Tokens */
 		--_table-border-radius: var(--md-sys-shape-corner-small, 4px);
+		--_table-background-color: var(--md-sys-color-surface-variant);
 		--_header-row-height: 56px;
 		--_data-row-height: 52px;
 		--_row-horizontal-padding: 16px;

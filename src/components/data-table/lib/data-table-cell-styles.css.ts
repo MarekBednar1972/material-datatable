@@ -15,15 +15,16 @@ export const cellStyles = css`
 	}
 
 	.md-data-table__cell {
+		border-bottom: 1px solid var(--_table-background-color);
 		display: flex;
 		align-items: center;
 		position: relative;
 		height: 100%;
-		padding: 0 var(--_cell-horizontal-padding);
+		padding: 12px 20px;
 		color: var(--_on-surface);
-		font-family: var(--_body-medium-font);
-		font-size: var(--_body-medium-size);
-		font-weight: var(--_body-medium-weight);
+		font-family: 'Roboto', Arial, sans-serif;
+		font-size: 1rem;
+		font-weight: 400;
 		line-height: var(--_body-medium-line-height);
 		box-sizing: border-box;
 		overflow: hidden;
@@ -37,6 +38,8 @@ export const cellStyles = css`
 	}
 
 	:host(:first-of-type) .md-data-table__cell {
+		border-left: 2px solid var(--_table-background-color);
+		border-bottom: 1px solid var(--_table-background-color);
 		padding-left: var(--_row-horizontal-padding);
 	}
 

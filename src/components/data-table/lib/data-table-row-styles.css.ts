@@ -16,7 +16,7 @@ export const rowStyles = css`
 
 	.md-data-table__row {
 		display: flex;
-		border-bottom: 1px solid var(--_outline-variant);
+		border-bottom: 1px solid var(--_table-background-color);
 		background: var(--_surface-color);
 		transition: background-color var(--_motion-duration-short) var(--_motion-easing-normal);
 		min-height: var(--_data-row-height);

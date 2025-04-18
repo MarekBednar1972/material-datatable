@@ -1,3 +1,7 @@
+import {css} from 'lit';
+
+export const lightCss = css`
+
 * {
 	--md-icon-font: "Material Icons";
 	--Font-Family: 'Roboto', sans-serif;
@@ -87,3 +91,4 @@
 	cursor: col-resize;
 	user-select: none;
 }
+`;

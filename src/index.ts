@@ -3,17 +3,18 @@ import {customElement} from 'lit/decorators.js';
 import './components/data-table/md-data-table';
 import {DataColumn} from "./components/data-table/types";
 import {dataManager} from "./data-manager";
+import {lightCss} from "./light";
 
 @customElement('my-app')
 export class MyApp extends LitElement {
 
-	static styles = css`
+	static styles = [css`
 		:host {
 			display: block;
 			padding: 20px;
 			height: 500px;
 		}
-	`;
+	`, lightCss];
 
 	private manager = dataManager;
 	private columns: DataColumn[] = [{

@@ -5,7 +5,8 @@
   "main": "index.html",
   "scripts": {
     "start": "web-dev-server --node-resolve --open --watch",
-    "build": "tsc"
+    "build": "tsc",
+    "watch": "tsc --watch"
   },
   "keywords": [],
   "author": "",
